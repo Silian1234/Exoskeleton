@@ -19,6 +19,8 @@ Modular full-body armor in class 5/6 Aramid, worn by boss-level armored GigaChad
 
 ## Description (Markdown)
 
+![FullBodyArmor: EXO-1, EXO-2, EXO-3, FBA](https://raw.githubusercontent.com/Silian1234/Exoskeleton/main/art/banner_lineup.png)
+
 **FullBodyArmor** adds two things to Tarkov: modular full-body armor you have to take off a boss-tier enemy, and powered exoskeletons that trade armor for mobility.
 
 ### FBA modular full-body armor

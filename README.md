@@ -1,5 +1,7 @@
 # FullBodyArmor
 
+![FullBodyArmor: EXO-1, EXO-2, EXO-3, FBA](art/banner_lineup.png)
+
 Modular full-body armor and three tiers of powered exoskeletons for **SPT 4.0.x** (EFT 0.16.9). Fika compatible.
 
 ## Features
