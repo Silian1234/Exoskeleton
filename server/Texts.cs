@@ -39,13 +39,19 @@ internal static class Texts
 
     /// <summary>Name/short/description in every language. Values starting with '@' are keys translated per language.</summary>
     public static Dictionary<string, LocaleDetails> Item(string nameKey, string shortKey, string descKey,
-        params (string Placeholder, string Value)[] values)
+        params (string Placeholder, string Value)[] values) =>
+        ItemWith(nameKey, shortKey, descKey, values
+            .Select(v => (v.Placeholder, (Func<string, string>)(lang => v.Value.StartsWith("@") ? Get(lang, v.Value.Substring(1)) : v.Value)))
+            .ToArray());
+
+    /// <summary>Same, with placeholder values computed per language.</summary>
+    public static Dictionary<string, LocaleDetails> ItemWith(string nameKey, string shortKey, string descKey,
+        params (string Placeholder, Func<string, string> Value)[] values)
     {
         string Fill(string lang, string key)
         {
             var s = Get(lang, key);
-            foreach (var (ph, v) in values)
-                s = s.Replace("{" + ph + "}", v.StartsWith("@") ? Get(lang, v.Substring(1)) : v);
+            foreach (var (ph, v) in values) s = s.Replace("{" + ph + "}", v(lang));
             return s;
         }
         var result = new Dictionary<string, LocaleDetails>();

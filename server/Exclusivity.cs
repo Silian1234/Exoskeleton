@@ -9,14 +9,18 @@ using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Servers;
+using System.Threading;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace FullBodyArmor;
 
-[Injectable(InjectionType.Singleton, null, OnLoadOrder.PostDBModLoader + 3)]
-public class FbaExclusivity(ISptLogger<FbaExclusivity> logger, ConfigServer configServer) : IOnLoad
+[Injectable(InjectionType.Singleton, OnLoadOrder.Preload + 3)]
+public class FbaExclusivity(ISptLogger<FbaExclusivity> logger, ItemConfig itemConfig, AirdropConfig airdropConfig,
+    ScavCaseConfig scavCaseConfig, TraderConfig traderConfig, PmcConfig pmcConfig, QuestConfig questConfig,
+    HideoutConfig hideoutConfig, RagfairConfig ragfairConfig) : IOnLoad
 {
-    public Task OnLoad()
+    public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         var ids = FullBodyArmorLoader.RegisteredIds.ToList();
         if (ids.Count == 0) return Task.CompletedTask;
@@ -28,16 +32,16 @@ public class FbaExclusivity(ISptLogger<FbaExclusivity> logger, ConfigServer conf
             lists++;
         }
 
-        var item = configServer.GetConfig<ItemConfig>();
+        var item = itemConfig;
         Add(item.RewardItemBlacklist);                       // quest/coop/airdrop rewards that honour it
 
-        foreach (var loot in configServer.GetConfig<AirdropConfig>().Loot.Values) Add(loot.ItemBlacklist);
-        Add(configServer.GetConfig<ScavCaseConfig>().RewardItemBlacklist);
-        Add(configServer.GetConfig<TraderConfig>().Fence?.Blacklist);
-        Add(configServer.GetConfig<PmcConfig>().GlobalLootBlacklist);   // random loot in PMC backpacks/pockets
-        foreach (var rq in configServer.GetConfig<QuestConfig>().RepeatableQuests ?? new()) Add(rq.RewardBlacklist);
-        Add(configServer.GetConfig<HideoutConfig>().CultistCircle?.RewardItemBlacklist);
-        Add(configServer.GetConfig<RagfairConfig>().Dynamic?.Blacklist?.Custom);
+        foreach (var loot in airdropConfig.Loot.Values) Add(loot.ItemBlacklist);
+        Add(scavCaseConfig.RewardItemBlacklist);
+        Add(traderConfig.Fence?.Blacklist);
+        Add(pmcConfig.GlobalLootBlacklist);   // random loot in PMC backpacks/pockets
+        foreach (var rq in questConfig.RepeatableQuests ?? new()) Add(rq.RewardBlacklist);
+        Add(hideoutConfig.CultistCircle?.RewardItemBlacklist);
+        Add(ragfairConfig.Dynamic?.Blacklist?.Custom);
 
         logger.Info($"[FullBodyArmor] exclusivity: {ids.Count} items blacklisted in {lists} generator lists");
         return Task.CompletedTask;

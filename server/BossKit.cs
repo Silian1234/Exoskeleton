@@ -9,12 +9,16 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Helpers.Items;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Services;
 using Path = System.IO.Path;
+using System.Threading;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace FullBodyArmor;
 
@@ -29,17 +33,18 @@ public class BossKit
     private record Build(string Name, string Weapon, string Ammo, List<JsonElement> Items, string Root);
 
     private readonly List<Build> _builds = new();
-    private readonly DatabaseService _db;
+    private readonly TemplateTable _templates;
+    private readonly BotTable _bots;
     private readonly ItemHelper _itemHelper;
     private readonly ISptLogger<FbaBotPatch> _log;
 
-    public BossKit(DatabaseService db, ItemHelper itemHelper, ISptLogger<FbaBotPatch> log)
+    public BossKit(TemplateTable templates, BotTable bots, ItemHelper itemHelper, ISptLogger<FbaBotPatch> log)
     {
-        _db = db; _itemHelper = itemHelper; _log = log;
+        _templates = templates; _bots = bots; _itemHelper = itemHelper; _log = log;
         var path = Path.Combine(Path.GetDirectoryName(typeof(BossKit).Assembly.Location)!, "weapons.json");
         if (!File.Exists(path)) { log.Warning("[FullBodyArmor] weapons.json not found: armored GigaChads keep their weapon"); return; }
         using var doc = JsonDocument.Parse(File.ReadAllText(path));
-        var items = db.GetItems();
+        var items = templates.Items;
         foreach (var b in doc.RootElement.EnumerateArray())
         {
             var its = b.GetProperty("items").EnumerateArray().Select(e => e.Clone()).ToList();
@@ -60,7 +65,7 @@ public class BossKit
 
     private void Skills(BotBase bot)
     {
-        if (!_db.GetBots().Types.TryGetValue("bosstagilla", out var tag) || tag.BotSkills?.Common == null) return;
+        if (!_bots.Types.TryGetValue("bosstagilla", out var tag) || tag.BotSkills?.Common == null) return;
         var list = (bot.Skills?.Common ?? Enumerable.Empty<CommonSkill>()).ToList();
         foreach (var (name, mm) in tag.BotSkills.Common)
         {
@@ -90,7 +95,7 @@ public class BossKit
     private void Helmet(BotBase bot)
     {
         if (!FullBodyArmorLoader.MaskReady ||
-            !_db.GetItems().TryGetValue(new MongoId(ZabeyFba), out var mask) || mask.Properties == null) return;
+            !_templates.Items.TryGetValue(new MongoId(ZabeyFba), out var mask) || mask.Properties == null) return;
         var items = bot.Inventory.Items;
         var eq = bot.Inventory.Equipment.ToString();
         foreach (var s in new[] { "Headwear", "FaceCover", "Eyewear" }) RemoveSlot(items, eq, s); // ZABEY conflicts with helmets, blocks eyewear
@@ -115,7 +120,7 @@ public class BossKit
 
     private (int W, int H) Size(MongoId tpl)
     {
-        var p = _db.GetItems()[tpl].Properties;
+        var p = _templates.Items[tpl].Properties;
         return (p?.Width ?? 1, p?.Height ?? 1);
     }
 
@@ -143,7 +148,7 @@ public class BossKit
     {
         var items = bot.Inventory.Items;
         var eq = bot.Inventory.Equipment.ToString();
-        var db = _db.GetItems();
+        var db = _templates.Items;
         var cap = Capacity(db[magTpl]);
         int placed = 0;
         foreach (var slot in new[] { "TacticalVest", "Pockets", "Backpack" })
@@ -198,7 +203,7 @@ public class BossKit
     {
         var items = bot.Inventory.Items;
         var eq = bot.Inventory.Equipment.ToString();
-        var db = _db.GetItems();
+        var db = _templates.Items;
         RemoveSlot(items, eq, "FirstPrimaryWeapon");
 
         var map = new Dictionary<string, string>();

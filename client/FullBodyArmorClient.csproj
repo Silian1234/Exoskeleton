@@ -8,7 +8,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <!-- Path to your SPT install: dotnet build -c Release -p:SptDir=D:\SPT -->
-    <SptDir Condition="'$(SptDir)' == ''">C:\SPT</SptDir>
+    <SptDir Condition="'$(SptDir)' == ''">C:\SPT41</SptDir>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony"><HintPath>$(SptDir)/BepInEx/core/0Harmony.dll</HintPath><Private>false</Private></Reference>
@@ -16,7 +16,9 @@
     <Reference Include="Assembly-CSharp"><HintPath>$(SptDir)/EscapeFromTarkov_Data/Managed/Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="ItemComponent.Types"><HintPath>$(SptDir)/EscapeFromTarkov_Data/Managed/ItemComponent.Types.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="SAIN"><HintPath>$(SptDir)/BepInEx/plugins/SAIN/SAIN.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="SAIN.Preset.Shared"><HintPath>$(SptDir)/BepInEx/plugins/SAIN/SAIN.Preset.Shared.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Fika.Core"><HintPath>$(SptDir)/BepInEx/plugins/Fika/Fika.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="spt-common"><HintPath>$(SptDir)/BepInEx/plugins/spt/spt-common.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Newtonsoft.Json"><HintPath>$(SptDir)/EscapeFromTarkov_Data/Managed/Newtonsoft.Json.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Comfort"><HintPath>$(SptDir)/EscapeFromTarkov_Data/Managed/Comfort.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(SptDir)/EscapeFromTarkov_Data/Managed/UnityEngine.dll</HintPath><Private>false</Private></Reference>

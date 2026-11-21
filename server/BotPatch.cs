@@ -1,7 +1,7 @@
 // Post-processes bots returned by /client/game/bot/generate (BotController.Generate).
 // Needed because Progressive Bot System (APBS) generates loadouts itself and ignores the bot DB.
 //
-// PMCs: the SAIN personality is rolled HERE with SAIN's own formula and the client's active preset (SainRoller),
+// PMCs: the SAIN personality is rolled HERE with SAIN's own formula and the preset table the client reported (SainRoller),
 // then forced on the client through an invisible nickname marker (SAIN NicknamePersonalities).
 // The total personality distribution is unchanged; a share (default 20%) of the rolled GigaChads
 // gets the full FBA armor set (all slots, all class 5 or all class 6).
@@ -17,23 +17,22 @@ using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Controllers;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Helpers;
+using SPTarkov.Server.Core.Helpers.Items;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Services;
+using System.Threading;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace FullBodyArmor;
 
-[Injectable(InjectionType.Singleton, null, OnLoadOrder.PostDBModLoader + 2)]
-public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databaseService, ItemHelper itemHelper) : IOnLoad
+[Injectable(InjectionType.Singleton, OnLoadOrder.Preload + 2)]
+public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, TemplateTable templates, BotTable botTable, ItemHelper itemHelper) : IOnLoad
 {
     private static FbaBotPatch _instance;
     private ISptLogger<FbaBotPatch> Log => logger;
-    private SainRoller _sain;
-    private readonly object _sainLock = new();
-    private string _sainDir, _sainError, _sainSource;
-    private DateTime _nextSainCheck;
-    private (DateTime Config, DateTime Snapshot) _sainStamp;
     private BossKit _kit;
     private Dictionary<MongoId, MongoId> _magSwap, _ammoSwap;   // sanitize.json: Ares' magazines / HyperLethal ammo -> normal
     private readonly Random _rng = Random.Shared;
@@ -49,7 +48,7 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
     };
     private static readonly string[] ArmorSlots = { "Headwear", "TacticalVest", "ArmorVest", "Eyewear", "FaceCover" };
 
-    public Task OnLoad()
+    public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         _instance = this;
         var target = AccessTools.Method(typeof(BotController), nameof(BotController.Generate));
@@ -57,18 +56,16 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
         new Harmony("com.silian.exoskeleton").Patch(target, postfix: new HarmonyMethod(post));
         logger.Info($"[FullBodyArmor] patched {target.DeclaringType?.Name}.{target.Name}");
 
-        var cfg = FullBodyArmorLoader.Config;
-        if (FullBodyArmorLoader.ArmorReady && cfg.GigaChadArmorEnabled)
+        if (FullBodyArmorLoader.ArmorReady)
         {
             try
             {
-                _sainDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, cfg.SainPluginDir));
-                GetSainRoller();
+                var preset = SainRoller.Init(Path.GetDirectoryName(typeof(FbaBotPatch).Assembly.Location)!);
+                logger.Info(preset == null
+                    ? "[FullBodyArmor] waiting for the FBA client to report the SAIN preset (no saved sain-assignments.json yet)"
+                    : $"[FullBodyArmor] SAIN personalities: saved table of preset {preset}");
             }
-            catch (Exception ex)
-            {
-                logger.Error($"[FullBodyArmor] invalid SAIN path; GigaChad armor disabled: {ex.Message}");
-            }
+            catch (Exception ex) { logger.Warning($"[FullBodyArmor] sain-assignments.json ignored: {ex.Message}"); }
         }
         try { LoadSanitize(); }
         catch (Exception ex)
@@ -78,38 +75,6 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
             logger.Error($"[FullBodyArmor] sanitize.json not applied: {ex.Message}");
         }
         return Task.CompletedTask;
-    }
-
-    private SainRoller GetSainRoller()
-    {
-        if (_sainDir == null) return null;
-        lock (_sainLock)
-        {
-            var now = DateTime.UtcNow;
-            if (now < _nextSainCheck) return _sain;
-            _nextSainCheck = now.AddSeconds(5);
-            try
-            {
-                var presets = Path.Combine(_sainDir, "Presets");
-                var stamp = (System.IO.File.GetLastWriteTimeUtc(Path.Combine(presets, "ConfigSettings.json")),
-                    System.IO.File.GetLastWriteTimeUtc(Path.Combine(presets, "fba-built-in-assignments.json")));
-                if (_sain != null && stamp == _sainStamp) return _sain;
-                _sain = SainRoller.Load(_sainDir, out var source);
-                _sainStamp = stamp;
-                if (_sainError != null || source != _sainSource)
-                    logger.Success($"[FullBodyArmor] SAIN personalities loaded from {source}; armored GigaChad share {FullBodyArmorLoader.Config.ArmoredGigaChadShare:P0}");
-                _sainError = null;
-                _sainSource = source;
-            }
-            catch (Exception ex)
-            {
-                _sain = null;
-                if (_sainError != ex.Message)
-                    logger.Warning($"[FullBodyArmor] SAIN preset unavailable; bots keep normal SAIN assignment: {ex.Message}");
-                _sainError = ex.Message;
-            }
-            return _sain;
-        }
     }
 
     private static void Postfix(ref Task<IEnumerable<BotBase>> __result)
@@ -129,7 +94,7 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
     {
         if (bots == null) return;
         var cfg = FullBodyArmorLoader.Config;
-        var sain = GetSainRoller();
+        var sain = cfg.GigaChadArmorEnabled && FullBodyArmorLoader.ArmorReady ? SainRoller.Current : null;
         int sanitized = 0, scavs = 0, pmcs = 0, giga = 0, armored = 0;
         foreach (var bot in bots)
         {
@@ -149,13 +114,13 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
                 pmcs++;
                 var personality = sain.Roll(role, bot.Info.Level ?? 1, Power(bot), _rng);
                 Mark(bot, personality);
-                if (personality != "GigaChad") continue;
+                if (personality != SainRoller.GigaChad) continue;
                 giga++;
                 if (_rng.NextDouble() >= cfg.ArmoredGigaChadShare ||
                     !Equip(bot, FullBodyArmorLoader.FullSet(_rng.NextDouble() < cfg.Class6Share ? 1 : 0))) continue;
 
                 armored++;
-                (_kit ??= new BossKit(databaseService, itemHelper, logger)).Apply(bot, _rng);
+                (_kit ??= new BossKit(templates, botTable, itemHelper, logger)).Apply(bot, _rng);
             }
             catch (Exception ex)
             {
@@ -173,7 +138,7 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
         var path = Path.Combine(Path.GetDirectoryName(typeof(FbaBotPatch).Assembly.Location)!, "sanitize.json");
         if (!System.IO.File.Exists(path)) { logger.Warning("[FullBodyArmor] sanitize.json not found: Ares' mags / HyperLethal ammo are not cleaned"); return; }
         using var doc = System.Text.Json.JsonDocument.Parse(System.IO.File.ReadAllText(path));
-        var db = databaseService.GetItems();
+        var db = templates.Items;
         foreach (var (key, dict) in new[] { ("magazines", _magSwap), ("ammo", _ammoSwap) })
             foreach (var kv in doc.RootElement.GetProperty(key).EnumerateObject())
             {
@@ -188,7 +153,7 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
     {
         var items = bot?.Inventory?.Items;
         if (items == null) return 0;
-        var db = databaseService.GetItems();
+        var db = templates.Items;
         int n = 0;
         foreach (var it in items.ToList())
         {
@@ -212,7 +177,7 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
         return n;
     }
 
-    private static void Mark(BotBase bot, string personality)
+    private static void Mark(BotBase bot, int personality)
     {
         var m = SainRoller.Marker(personality);
         bot.Info.Nickname = (bot.Info.Nickname ?? "") + m;
@@ -224,7 +189,7 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
     {
         var items = bot.Inventory.Items;
         var eq = bot.Inventory.Equipment?.ToString();
-        var db = databaseService.GetItems();
+        var db = templates.Items;
         double weapon = 0;
         var gun = items.FirstOrDefault(i => i.ParentId == eq && i.SlotId == "FirstPrimaryWeapon")
                   ?? items.FirstOrDefault(i => i.ParentId == eq && i.SlotId == "Holster");
@@ -255,7 +220,7 @@ public class FbaBotPatch(ISptLogger<FbaBotPatch> logger, DatabaseService databas
         var eq = inv.Equipment?.ToString();
         if (eq == null || !FullBodyArmorLoader.ArmorReady) return false;
         var items = inv.Items;
-        var db = databaseService.GetItems();
+        var db = templates.Items;
         Item Make(string tpl, string parent, string slot)
         {
             var max = db[new MongoId(tpl)].Properties?.MaxDurability ?? 0;

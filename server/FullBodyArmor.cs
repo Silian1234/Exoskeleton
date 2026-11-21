@@ -1,4 +1,4 @@
-// FullBodyArmor — modular full-body armor (SPT 4.0.x).
+// FullBodyArmor — modular full-body armor (SPT 4.1.x).
 // Carrier = FORT Redut-T5 clone with NO built-in inserts: every slot is removable.
 // Pieces: 10 types x classes 5/6, Aramid. One item type fits paired slots (left/right, front/back):
 // the client intersects slot colliders with item colliders (verified in raid with FbaArmorProbe).
@@ -14,25 +14,29 @@ using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Services;
-using SPTarkov.Server.Core.Services.Mod;
+using SPTarkov.Server.Core.Services.Modding.Custom;
 using Range = SemanticVersioning.Range;
 using Version = SemanticVersioning.Version;
+using System.Threading;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace FullBodyArmor;
 
-public record ModMetadata : AbstractModMetadata
+// SPT 4.1: metadata is an IModMetadata record; bundles are picked up from bundles.json next to the DLL.
+public record ModMetadata : IModMetadata
 {
-    public override string ModGuid { get; init; } = "com.silian.exoskeleton";
-    public override string Name { get; init; } = "FullBodyArmor";
-    public override string Author { get; init; } = "silian";
-    public override List<string> Contributors { get; init; } = new();
-    public override Version Version { get; init; } = new("1.0.0");
-    public override Range SptVersion { get; init; } = new("~4.0.0");
-    public override List<string> Incompatibilities { get; init; } = new();
-    public override Dictionary<string, Range> ModDependencies { get; init; } = new();
-    public override string Url { get; init; } = "";
-    public override bool? IsBundleMod { get; init; } = true;
-    public override string License { get; init; } = "MIT";
+    public string ModGuid { get; init; } = "com.silian.exoskeleton";
+    public string Name { get; init; } = "FullBodyArmor";
+    public string Author { get; init; } = "silian";
+    public List<string> Contributors { get; init; }
+    public Version Version { get; init; } = new("1.1.0");
+    public Range SptVersion { get; init; } = new("~4.1.3");
+    public List<string> Incompatibilities { get; init; }
+    public Dictionary<string, Range> ModDependencies { get; init; }
+    public string Url { get; init; } = "https://github.com/Silian1234/Exoskeleton";
+    public string License { get; init; } = "MIT";
+    public bool HasPrepatcher { get; init; } = false;
 }
 
 /// <summary>One armor piece type, available in class 5 and class 6 (index 0 / 1).</summary>
@@ -45,10 +49,10 @@ public record Piece(
 /// <summary>Carrier slot: name, slot id, piece type, slot colliders, slot plate colliders.</summary>
 public record CarrierSlot(string Name, string Id, string Piece, string[] Colliders, string[] PlateColliders, bool BluntReduce);
 
-[Injectable(InjectionType.Singleton, null, OnLoadOrder.PostDBModLoader + 1)]
+[Injectable(InjectionType.Singleton, OnLoadOrder.Preload + 1)]
 public class FullBodyArmorLoader(
     ISptLogger<FullBodyArmorLoader> logger,
-    DatabaseService databaseService,
+    TemplateTable templates,
     CustomItemService customItemService) : IOnLoad
 {
     // vanilla
@@ -153,20 +157,40 @@ public class FullBodyArmorLoader(
         public bool GigaChadArmorEnabled { get; set; } = true;
         public double ArmoredGigaChadShare { get; set; } = 0.2;
         public double Class6Share { get; set; } = 0.5;
-        // relative to the SPT server folder (C:\SPT\SPT)
-        public string SainPluginDir { get; set; } = "../BepInEx/plugins/SAIN";
+        // Armored GigaChads fight harder (client side, SAIN): AggressionCoef x ArmoredGigaChadAggression
+        // (searches sooner, holds ground longer), full suppression resistance, Wreckless search behaviour.
+        public bool ArmoredGigaChadBerserk { get; set; } = true;
+        public double ArmoredGigaChadAggression { get; set; } = 2.0;
+        // Exoskeletons vs armored gear: true lets that kind of armored item be worn together with any EXO tier.
+        public bool ExoAllowArmoredHelmets { get; set; } = false;
+        public bool ExoAllowArmoredFaceCovers { get; set; } = false;
+        public bool ExoAllowArmoredEyewear { get; set; } = false;
+        public bool ExoAllowArmoredRigs { get; set; } = false;
+        // Profile allowed to change these from the F12 menu ("" = the first profile that changes one becomes the owner).
+        public string SettingsOwnerProfileId { get; set; } = "";
+    }
+
+    private static string ConfigPath =>
+        System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(FullBodyArmorLoader).Assembly.Location)!, "config.json");
+
+    /// <summary>Writes the current Config back to config.json (F12 changes).</summary>
+    public static void SaveConfig()
+    {
+        var tmp = ConfigPath + ".tmp";
+        System.IO.File.WriteAllText(tmp, System.Text.Json.JsonSerializer.Serialize(Config, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        System.IO.File.Move(tmp, ConfigPath, true);
     }
 
     public static FbaConfig Config = new();
 
-    public Task OnLoad()
+    public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         Config = ReadConfig();
         ArmorReady = false;
         MaskReady = false;
         TestModeOn = false;
         ClonedIds.Clear();
-        var items = databaseService.GetItems();
+        var items = templates.Items;
         if (!items.TryGetValue(new MongoId(RedutT5), out var source) || source?.Properties?.Slots == null)
         {
             logger.Error("[FullBodyArmor] missing Redut-T5 slots; FBA kits disabled");
@@ -232,6 +256,7 @@ public class FullBodyArmorLoader(
 
         var carrier = TryClone(Carrier, new NewItemFromCloneDetails
         {
+            NewItemName = string.Empty,
             ItemTplToClone = new MongoId(RedutT5),
             NewId = Carrier,
             ParentId = source.Parent.ToString(),
@@ -281,16 +306,17 @@ public class FullBodyArmorLoader(
     /// <summary>Lootable copy of Tagilla's welding mask "ZABEY" (the original is Unlootable, Labyrinth boss gear).</summary>
     private bool MakeZabeyCopy()
     {
-        var items = databaseService.GetItems();
+        var items = templates.Items;
         var src = new MongoId(BossKit.Zabey);
         if (!items.TryGetValue(src, out var source) || source?.Properties == null)
         {
             logger.Warning("[FullBodyArmor] ZABEY mask not in DB; armored GigaChads keep their original head gear");
             return false;
         }
-        var hb = databaseService.GetHandbook().Items.FirstOrDefault(i => i.Id == src);
+        var hb = templates.Handbook.Items.FirstOrDefault(i => i.Id == src);
         var item = TryClone(BossKit.ZabeyFba, new NewItemFromCloneDetails
         {
+            NewItemName = string.Empty,
             ItemTplToClone = src,
             NewId = BossKit.ZabeyFba,
             ParentId = source.Parent.ToString(),
@@ -313,6 +339,7 @@ public class FullBodyArmorLoader(
         int cls = Classes[ci];
         var item = TryClone(id, new NewItemFromCloneDetails
         {
+            NewItemName = string.Empty,
             ItemTplToClone = new MongoId(ClonePlate),
             NewId = id,
             ParentId = parent,
@@ -344,7 +371,7 @@ public class FullBodyArmorLoader(
 
     private TemplateItem TryClone(string id, NewItemFromCloneDetails details)
     {
-        var items = databaseService.GetItems();
+        var items = templates.Items;
         var key = new MongoId(id);
         if (items.ContainsKey(key))
         {

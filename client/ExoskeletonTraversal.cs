@@ -17,7 +17,7 @@ namespace FullBodyArmorClient
             AccessTools.FieldRefAccess<MovementContext, Player>("_player");
         private static readonly ConditionalWeakTable<MovementContext, VaultTiming> VaultTimings = new();
         private static Action<MovementContext, Vector2, EVaultingStrategy> _computeVaultSpeed;   // MovementContext.method_17
-        private static Func<object, float> _fallSafeHeight;                                       // ActiveHealthController.FallSafeHeight_1
+        private static Func<object, float> _fallSafeHeight;                                       // ActiveHealthController FallSafeHeight backing field
 
         private sealed class VaultTiming
         {
@@ -42,7 +42,9 @@ namespace FullBodyArmorClient
             {
                 var fall = AccessTools.DeclaredMethod(typeof(ActiveHealthController), nameof(ActiveHealthController.HandleFall), new[] { typeof(float) })
                            ?? throw new MissingMethodException("ActiveHealthController.HandleFall(float)");
-                _fallSafeHeight = ExoResolve.FloatMember(typeof(ActiveHealthController), "FallSafeHeight");
+                // backing field: FallSafeHeight_1 (EFT 40087) / _fallSafeHeight (EFT 40743); the property has only a setter
+                try { _fallSafeHeight = ExoResolve.FloatMember(typeof(ActiveHealthController), "FallSafeHeight"); }
+                catch (MissingMemberException) { _fallSafeHeight = ExoResolve.FloatMember(typeof(ActiveHealthController), "_fallSafeHeight"); }
                 harmony.Patch(fall, prefix: Hook(nameof(CushionFall)));
             });
 
@@ -117,8 +119,8 @@ namespace FullBodyArmorClient
             if (!IsLocal(__instance) || __instance.MovementContext is not { } movement || __instance.VaultingParameters is not { } parameters) return;
             if (!VaultTimings.TryGetValue(movement, out var timing) && !ExoskeletonEquipment.IsWearing(__instance)) return;
             var strategy = parameters.GetVaultingStrategy();
-            // BackendConfigSettingsClass.VaultingSettings.MovesSettings.{Vault|Climb}Settings.SpeedRange (read by reflection)
-            var moves = Member(Member(Traverse.Create(Singleton<BackendConfigSettingsClass>.Instance), "VaultingSettings"), "MovesSettings");
+            // GlobalConfiguration.VaultingSettings.MovesSettings.{Vault|Climb}Settings.SpeedRange (read by reflection)
+            var moves = Member(Member(Traverse.Create(Singleton<GlobalConfiguration>.Instance), "VaultingSettings"), "MovesSettings");
             var settings = strategy switch
             {
                 EVaultingStrategy.Vault => Member(moves, "VaultSettings"),

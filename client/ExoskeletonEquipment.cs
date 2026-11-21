@@ -1,6 +1,9 @@
 // EXO-3 equipment rule: the suit trades armor for its buffs. It conflicts only with ARMORED gear
 // (helmets / face covers / eyewear / rigs that have an armor class or armor inserts); caps, hats, plain
 // glasses and unarmored rigs stay allowed. Server side mirrors this in ConflictingItems.
+// The server config can allow each gear kind (ExoAllowArmored*), read through ServerSettings; F12 changes apply at once.
+// For that the exoskeleton templates' own ConflictingItems (built by the server at start) are emptied on the client
+// the first time an exoskeleton is seen, so only this check (which reads the current settings) decides.
 //
 // Hook: the Slot method that checks equipment conflicts and returns Result<bool> (obfuscated name, resolved by signature).
 using System;
@@ -49,18 +52,36 @@ namespace FullBodyArmorClient
 
             var hook = typeof(ConflictHook<>).MakeGenericType(resultType).GetMethod(nameof(ConflictHook<bool>.Prefix));
             harmony.Patch(check, prefix: new HarmonyMethod(hook));
+            harmony.Patch(AccessTools.PropertyGetter(typeof(Item), nameof(Item.ConflictingItems)),
+                postfix: new HarmonyMethod(typeof(ExoskeletonEquipment), nameof(ConflictListPostfix)));
         }
 
         private static class ConflictHook<TResult>
         {
             public static bool Prefix(Slot __instance, Item __0, ref TResult __result)
             {
+                DropNativeList(__0);
+                if (__instance.ParentItem is InventoryEquipment eq) DropNativeList(eq.GetSlot(EquipmentSlot.ArmorVest)?.ContainedItem);
                 var conflict = FindConflict(__instance, __0);
                 if (conflict == null) return true;
                 var error = _conflictError.Invoke(new object[] { __0, __instance.ParentItem, conflict });
                 __result = (TResult)_toResult.Invoke(null, new[] { error });
                 return false;
             }
+        }
+
+        private static void ConflictListPostfix(Item __instance, ref string[] __result)
+        {
+            if (__result == null || __result.Length == 0 || ExoTiers.TierOf(__instance?.StringTemplateId) == 0) return;
+            DropNativeList(__instance);
+            __result = Array.Empty<string>();
+        }
+
+        private static void DropNativeList(Item item)
+        {
+            if (item == null || ExoTiers.TierOf(item.StringTemplateId) == 0) return;
+            var template = item.Template;
+            if (template?.ConflictingItems != null && template.ConflictingItems.Length > 0) template.ConflictingItems = Array.Empty<string>();
         }
 
         private static Item FindConflict(Slot slot, Item incoming)
@@ -71,6 +92,7 @@ namespace FullBodyArmorClient
             {
                 foreach (var slotId in ConflictSlots)
                 {
+                    if (!Blocked(slotId)) continue;
                     var other = equipment.GetSlot(slotId)?.ContainedItem;
                     if (IsArmored(incoming, other)) return other;
                 }
@@ -78,17 +100,30 @@ namespace FullBodyArmorClient
             else if (ExoTiers.TierOf(vest?.ContainedItem?.StringTemplateId) > 0)
             {
                 foreach (var slotId in ConflictSlots)
-                    if (ReferenceEquals(slot, equipment.GetSlot(slotId)) && IsArmored(vest.ContainedItem, incoming))
+                    if (Blocked(slotId) && ReferenceEquals(slot, equipment.GetSlot(slotId)) && IsArmored(vest.ContainedItem, incoming))
                         return vest.ContainedItem;
             }
             return null;
         }
 
-        /// <summary>True when the item has its own armor class or holds any armor insert/plate (or is listed by the server).</summary>
+        /// <summary>False when the server config lets armored gear of this slot be worn with an exoskeleton.</summary>
+        private static bool Blocked(EquipmentSlot slot)
+        {
+            var c = ServerSettings.Get();
+            switch (slot)
+            {
+                case EquipmentSlot.Headwear: return !c.ExoAllowArmoredHelmets;
+                case EquipmentSlot.TacticalVest: return !c.ExoAllowArmoredRigs;
+                case EquipmentSlot.FaceCover: return !c.ExoAllowArmoredFaceCovers;
+                case EquipmentSlot.Eyewear: return !c.ExoAllowArmoredEyewear;
+                default: return false;
+            }
+        }
+
+        /// <summary>True when the item has its own armor class or holds any armor insert/plate.</summary>
         private static bool IsArmored(Item exo, Item other)
         {
             if (other == null) return false;
-            if (Array.IndexOf(exo.ConflictingItems ?? Array.Empty<string>(), other.StringTemplateId) >= 0) return true;
             if ((other.GetItemComponent<ArmorComponent>()?.ArmorClass ?? 0) > 0) return true;
             if (other is CompoundItem compound)
                 foreach (var s in compound.Slots)

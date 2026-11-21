@@ -4,7 +4,8 @@
 //   T3 "assault"       eb8f6601528512fcd0b0fd1d  built-in TITANIUM plates on all FBA zones:
 //                      torso front/back class 4, sides+armpits / neck / shoulders / forearms / groin / thighs / calves class 3,
 //                      durability 55 each (Titan repairs badly: 6-10 % max-durability loss per repair), ~21 kg, Ragman LL4 1 100 000
-// All tiers conflict with ANY armored gear (helmets, armored masks/glasses, ballistic rigs): the frame trades armor for buffs.
+// By default all tiers conflict with ANY armored gear (helmets, armored masks/glasses, ballistic rigs): the frame trades
+// armor for buffs. config.json ExoAllowArmored* lifts the rule per gear kind (client: ServerSettings).
 // Models: item_equipment_exoskeleton[_t2|_t3].bundle; a tier falls back to the T1 model while its bundle is not installed.
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,17 @@ using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Services;
-using SPTarkov.Server.Core.Services.Mod;
+using SPTarkov.Server.Core.Services.Modding.Custom;
 using Path = System.IO.Path;
+using System.Threading;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace FullBodyArmor;
 
-[Injectable(InjectionType.Singleton, null, OnLoadOrder.PostDBModLoader + 20)]
-public class ExoskeletonLoader(DatabaseService db, CustomItemService itemService, ISptLogger<ExoskeletonLoader> log) : IOnLoad
+[Injectable(InjectionType.Singleton, OnLoadOrder.Preload + 20)]
+public class ExoskeletonLoader(TemplateTable templates, TradersTable traders, GlobalTable globals, CustomItemService itemService,
+    ISptLogger<ExoskeletonLoader> log) : IOnLoad
 {
     public const string TemplateId = "e5f82a1e0c7846b9a4130de1";   // T1 (kept: existing items stay valid)
     public const string T2Id = "bfcd6ff9414d8611685db39f";
@@ -90,7 +95,7 @@ public class ExoskeletonLoader(DatabaseService db, CustomItemService itemService
     private const double InsertDurability = 55;   // vanilla titanium class 4 plate (KibaArms Titan); same for all zones
     private const double InsertBlunt = 0.14;      // vanilla titanium plate blunt throughput
 
-    public Task OnLoad()
+    public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         try { Register(); }
         catch (Exception ex) { log.Error($"[Exoskeleton] registration failed: {ex}"); }
@@ -99,7 +104,7 @@ public class ExoskeletonLoader(DatabaseService db, CustomItemService itemService
 
     private void Register()
     {
-        var items = db.GetItems();
+        var items = templates.Items;
         foreach (var t in Tiers)
             if (items.ContainsKey(new MongoId(t.Id))) throw new InvalidOperationException($"template {t.Id} already exists");
 
@@ -107,16 +112,21 @@ public class ExoskeletonLoader(DatabaseService db, CustomItemService itemService
         var liners = BuildLinerSlots(items, source);
         MakeInserts(items);
 
+        // config.json can allow each kind of armored gear; the client reads the same switches from /fullbodyarmor/settings
+        var cfg = FullBodyArmorLoader.Config;
+        var blocked = new List<string>();
+        if (!cfg.ExoAllowArmoredHelmets) blocked.Add(Headwear);
+        if (!cfg.ExoAllowArmoredRigs) blocked.Add(Rig);
+        if (!cfg.ExoAllowArmoredFaceCovers) blocked.Add(FaceCover);
+        if (!cfg.ExoAllowArmoredEyewear) blocked.Add(Eyewear);
         var conflicts = items.Values
-            .Where(t => t.Type == "Item" &&
-                (IsUnder(t, Headwear, items) || IsUnder(t, Rig, items) || IsUnder(t, FaceCover, items) || IsUnder(t, Eyewear, items)) &&
-                HasArmor(t, items))
+            .Where(t => t.Type == "Item" && blocked.Any(b => IsUnder(t, b, items)) && HasArmor(t, items))
             .Select(t => t.Id).ToHashSet();
 
-        var assort = db.GetTrader(new MongoId(Ragman))?.Assort;
+        var assort = traders.GetValueOrDefault(new MongoId(Ragman))?.Assort;
         if (assort?.Items == null || assort.BarterScheme == null || assort.LoyalLevelItems == null)
             throw new InvalidOperationException("Ragman assortment unavailable");
-        var presets = db.GetGlobals().ItemPresets;
+        var presets = globals.ItemPresets;
         var bundleDir = Path.Combine(Path.GetDirectoryName(typeof(ExoskeletonLoader).Assembly.Location)!, "bundles");
 
         foreach (var t in Tiers)
@@ -124,9 +134,10 @@ public class ExoskeletonLoader(DatabaseService db, CustomItemService itemService
             var id = new MongoId(t.Id);
             var result = itemService.CreateItemFromClone(new NewItemFromCloneDetails
             {
+                NewItemName = string.Empty,
                 ItemTplToClone = new MongoId(Donor), NewId = t.Id, ParentId = source.Parent.ToString(),
                 HandbookParentId = ArmorHandbook, HandbookPriceRoubles = t.Price, FleaPriceRoubles = t.Price,
-                Locales = Texts.Item($"{t.Key}.name", $"{t.Key}.short", $"{t.Key}.desc")
+                Locales = Texts.ItemWith($"{t.Key}.name", $"{t.Key}.short", $"{t.Key}.desc", ("rule", RuleText))
             });
             if (result?.Success != true || !items.TryGetValue(id, out var item) || item.Properties == null)
                 throw new InvalidOperationException($"{t.ShortEn} clone failed: " + string.Join("; ", result?.Errors ?? new List<string>()));
@@ -215,6 +226,7 @@ public class ExoskeletonLoader(DatabaseService db, CustomItemService itemService
         {
             var r = itemService.CreateItemFromClone(new NewItemFromCloneDetails
             {
+                NewItemName = string.Empty,
                 ItemTplToClone = new MongoId(InsertDonor), NewId = ins.Id, ParentId = parent,
                 HandbookParentId = "5b5f704686f77447ec5d76d7", HandbookPriceRoubles = 30000, FleaPriceRoubles = 30000,
                 Locales = Texts.Item("insert.name", "insert.short", "insert.desc", ("zone", "@insert." + ins.Key), ("cls", ins.Class.ToString()))
@@ -246,6 +258,18 @@ public class ExoskeletonLoader(DatabaseService db, CustomItemService itemService
             } } }
         };
     }).ToList();
+
+    /// <summary>Description sentence matching config.json ExoAllowArmored* (order: helmets, masks, glasses, rigs).</summary>
+    private static string RuleText(string lang)
+    {
+        var c = FullBodyArmorLoader.Config;
+        var blocked = new[] { (!c.ExoAllowArmoredHelmets, "helmets"), (!c.ExoAllowArmoredFaceCovers, "masks"),
+                (!c.ExoAllowArmoredEyewear, "glasses"), (!c.ExoAllowArmoredRigs, "rigs") }
+            .Where(g => g.Item1).Select(g => Texts.Get(lang, "exo.gear." + g.Item2)).ToList();
+        if (blocked.Count == 4) return Texts.Get(lang, "exo.rule.all");
+        if (blocked.Count == 0) return Texts.Get(lang, "exo.rule.none");
+        return Texts.Get(lang, "exo.rule.some").Replace("{list}", string.Join(Texts.Get(lang, "exo.gear.sep"), blocked));
+    }
 
     private static bool IsUnder(TemplateItem item, string baseClass, Dictionary<MongoId, TemplateItem> items)
     {

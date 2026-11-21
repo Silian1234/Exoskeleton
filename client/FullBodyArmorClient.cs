@@ -1,11 +1,14 @@
 // FullBodyArmor.Client — client/headless BepInEx plugin.
 // The server rolls each PMC's SAIN personality and appends an invisible marker to its nickname.
-// SAIN 4.4.2 cannot apply it by itself:
+// SAIN (4.4.2 and still 4.5.1) cannot apply it by itself:
 //  1) SAIN.BotProfile.NickName is never assigned (always null), so nickname personalities never match;
 //  2) setNicknamePersonality uses EPersonality.Normal (8) as "not found", so Normal can't be forced.
 // This plugin: fills BotProfile.NickName from the game profile, and in PersonalityDictionary.GetPersonality
 // returns the marked personality directly (with its settings), skipping SAIN's random roll.
+// SAIN 4.5 picks personalities on the client from the loaded preset, so this plugin reports the preset's
+// personality table to the server (/fullbodyarmor/sain-assignments) whenever SAIN loads or changes a preset.
 // Only the equipped FBA carrier and its FBA plates are protected from durability loss.
+// Armored GigaChads (marker GigaChad + FBA carrier) get a harder-fighting copy of the GigaChad settings (Berserk).
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +22,9 @@ using EFT;
 using EFT.InventoryLogic;
 using Fika.Core.Networking.Packets.Player.Common.SubPackets;
 using HarmonyLib;
+using SPT.Common.Http;
+using SAIN.Preset.Shared.Models.Preset.Personalities;
+using SAIN.Preset.Shared.Personalities.BasePersonality;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SAIN.Models.Preset.Personalities;
@@ -28,30 +34,21 @@ using SAIN.SAINComponent.Classes.Info;
 
 namespace FullBodyArmorClient
 {
-    [BepInPlugin("com.silian.exoskeleton.client", "FullBodyArmor Client", "1.0.0")]
+    [BepInPlugin("com.silian.exoskeleton.client", "FullBodyArmor Client", "1.1.0")]
     [BepInDependency("me.sol.sain")]
     [BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource Log;
-        private static readonly EPersonality[] Order =
-        {
-            EPersonality.Wreckless, EPersonality.SnappingTurtle, EPersonality.GigaChad, EPersonality.Chad,
-            EPersonality.Rat, EPersonality.Timmy, EPersonality.Coward, EPersonality.Normal
-        };
-        private static string[] _markers;
+        // nickname marker: WORD JOINER + 4 bits (EPersonality value, ZWNJ = 1, ZWSP = 0) + WORD JOINER
+        private const char MarkEdge = '\u2060', Bit1 = '\u200C', Bit0 = '\u200B';
+        private static readonly char[] MarkerChars = { MarkEdge, Bit0, Bit1 };
         private static readonly FieldInfo NickField = AccessTools.Field(typeof(BotProfile), nameof(BotProfile.NickName));
         private static FieldInfo _loadedSainPreset;
 
         private void Awake()
         {
             Log = Logger;
-            _markers = Order.Select((n, i) =>
-            {
-                var s = "\u2060";
-                for (int b = 2; b >= 0; b--) s += ((i >> b) & 1) == 1 ? "\u200C" : "\u200B";
-                return s + "\u2060";
-            }).ToArray();
             var h = new Harmony("com.silian.exoskeleton.client");
             // EXO-3: every feature resolves its game members at runtime and is hooked independently;
             // a failed lookup disables only that feature and is logged as "[Exoskeleton] <feature>: DISABLED".
@@ -81,7 +78,13 @@ namespace FullBodyArmorClient
                 try { fikaPatched = PatchFika(h, fikaPlayer); }
                 catch (Exception ex) { Log.LogWarning("[FBA-Client] Fika durability sync left untouched: " + ex.Message); }
             Log.LogInfo("[FBA-Client] FBA carrier and plate durability lock" + (fikaPatched ? " (+Fika packets)" : ""));
+            SettingsMenu.Init(Config);
         }
+
+        private void Update() => SettingsMenu.Tick();
+
+        /// <summary>Drops the berserk copies so bots spawned after a settings change use the new values.</summary>
+        internal static void ResetBerserk() => BerserkCache = new ConditionalWeakTable<PersonalitySettingsClass, PersonalitySettingsClass>();
 
         // Keep the Fika type references out of the standalone game's startup path.
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -113,7 +116,7 @@ namespace FullBodyArmorClient
         {
             if (p == null || p.HealthController == null || !p.HealthController.IsAlive) return null;
             var nick = p.Profile?.Nickname;
-            if (nick == null || !nick.Contains(_markers[2])) return null; // index 2 = GigaChad
+            if (Decode(nick) != (int)EPersonality.GigaChad) return null;
             var vest = p.Inventory?.Equipment?.GetSlot(EquipmentSlot.ArmorVest)?.ContainedItem;
             return vest?.StringTemplateId == FbaCarrier ? vest : null;
         }
@@ -129,7 +132,7 @@ namespace FullBodyArmorClient
                 var item = __instance?.Item;
                 var tpl = item?.StringTemplateId;
                 if (tpl == null || (tpl != FbaCarrier && !FbaPlates.Contains(tpl))) return true;
-                var owner = item.Owner as TraderControllerClass;
+                var owner = item.Owner as ItemController;
                 if (owner == null) return true;
                 var p = Singleton<GameWorld>.Instance?.GetAlivePlayerByProfileID(owner.ID);
                 return !IsProtectedPiece(item, GetProtectedCarrier(p));
@@ -159,45 +162,83 @@ namespace FullBodyArmorClient
             }
         }
 
+        /// <summary>EPersonality value of the server's nickname marker, or -1.</summary>
+        private static int Decode(string nick)
+        {
+            if (string.IsNullOrEmpty(nick)) return -1;
+            for (int i = nick.IndexOf(MarkEdge); i >= 0 && i + 5 < nick.Length; i = nick.IndexOf(MarkEdge, i + 1))
+            {
+                if (nick[i + 5] != MarkEdge) continue;
+                int v = 0; bool ok = true;
+                for (int k = 1; k <= 4 && ok; k++)
+                {
+                    var c = nick[i + k];
+                    if (c == Bit1) v = v * 2 + 1; else if (c == Bit0) v *= 2; else ok = false;
+                }
+                if (ok) return v;
+            }
+            return -1;
+        }
+
+        private static string _lastReport;
+
         private static void EnablePresetExport(Harmony harmony)
         {
             try
             {
                 var handler = typeof(SAINPresetClass).Assembly.GetType("SAIN.Plugin.PresetHandler");
-                var update = handler == null ? null : AccessTools.Method(handler, "UpdateExistingBots");
                 _loadedSainPreset = handler == null ? null : AccessTools.Field(handler, "LoadedPreset");
-                if (update == null || _loadedSainPreset == null)
+                if (_loadedSainPreset == null)
                 {
-                    Log.LogWarning("[FBA-Client] SAIN built-in preset export unavailable");
+                    Log.LogWarning("[FBA-Client] SAIN preset report unavailable (PresetHandler.LoadedPreset not found)");
                     return;
                 }
-                harmony.Patch(update, postfix: new HarmonyMethod(typeof(Plugin), nameof(ExportBuiltinPreset)));
-                ExportBuiltinPreset();
+                var hooked = new List<string>();
+                foreach (var name in new[] { "UpdateExistingBots", "InitPresetFromDefinition", "loadDefault" })
+                {
+                    var m = AccessTools.Method(handler, name);
+                    if (m == null) continue;
+                    harmony.Patch(m, postfix: new HarmonyMethod(typeof(Plugin), nameof(ReportPreset)));
+                    hooked.Add(name);
+                }
+                Log.LogInfo("[FBA-Client] SAIN preset report hooks: " + string.Join(", ", hooked));
+                ReportPreset();
             }
-            catch (Exception ex) { Log.LogWarning("[FBA-Client] SAIN preset export hook failed: " + ex.Message); }
+            catch (Exception ex) { Log.LogWarning("[FBA-Client] SAIN preset report hook failed: " + ex.Message); }
         }
 
-        private static void ExportBuiltinPreset()
+        /// <summary>Sends the loaded SAIN preset's personality table (dictionary order) to the server's SainRoller.</summary>
+        private static void ReportPreset()
         {
             try
             {
                 var preset = _loadedSainPreset?.GetValue(null) as SAINPresetClass;
-                if (preset?.Info == null || preset.Info.IsCustom) return;
-                var dictionary = preset.PersonalityManager.PersonalityDictionary;
-                var snapshot = new
+                var dictionary = preset?.PersonalityManager?.PersonalityDictionary;
+                if (preset?.Info == null || dictionary == null || dictionary.Count == 0) return;
+                var forced = preset.GlobalSettings?.Mind?.ForcePersonality?.Where(kv => kv.Value).Select(kv => (EPersonality?)kv.Key).FirstOrDefault();
+                var name = preset.Info.Name;
+                var personalities = dictionary.Select(kv => new { Name = kv.Key.ToString(), Value = (int)kv.Key, kv.Value?.Assignment }).ToList();
+                var json = JsonConvert.SerializeObject(new
                 {
-                    Preset = preset.Info.BaseSAINDifficulty.ToString(),
-                    Assignments = Order.ToDictionary(p => p.ToString(), p => dictionary[p].Assignment)
-                };
-                var dir = Path.Combine(Path.GetDirectoryName(typeof(SAINPresetClass).Assembly.Location), "Presets");
-                var path = Path.Combine(dir, "fba-built-in-assignments.json");
-                var data = JsonConvert.SerializeObject(snapshot, new StringEnumConverter());
-                var temp = path + ".tmp";
-                File.WriteAllText(temp, data);
-                if (File.Exists(path)) File.Replace(temp, path, null);
-                else File.Move(temp, path);
+                    Preset = name,
+                    Forced = forced?.ToString(),
+                    ForcedValue = (int)(forced ?? 0),
+                    Personalities = personalities
+                }, new StringEnumConverter());
+                if (json == _lastReport) return;
+                _lastReport = json;
+                System.Threading.Tasks.Task.Run(() =>
+                {
+                    try
+                    {
+                        RequestHandler.PostJson("/fullbodyarmor/sain-assignments", json);
+                        Log.LogInfo($"[FBA-Client] SAIN preset reported to server: {name}, {personalities.Count} personalities" +
+                            (forced == null ? "" : $", forced {forced}"));
+                    }
+                    catch (Exception ex) { _lastReport = null; Log.LogWarning("[FBA-Client] SAIN preset report failed: " + ex.Message); }
+                });
             }
-            catch (Exception ex) { Log.LogWarning("[FBA-Client] SAIN preset export failed: " + ex.Message); }
+            catch (Exception ex) { Log.LogWarning("[FBA-Client] SAIN preset report failed: " + ex.Message); }
         }
 
         private static void ProfileCtorPost(BotProfile __instance)
@@ -211,21 +252,59 @@ namespace FullBodyArmorClient
             catch (Exception ex) { Log.LogWarning("[FBA-Client] nickname fill failed: " + ex.Message); }
         }
 
+        private static readonly MethodInfo CloneMethod =
+            typeof(object).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static ConditionalWeakTable<PersonalitySettingsClass, PersonalitySettingsClass> BerserkCache =
+            new ConditionalWeakTable<PersonalitySettingsClass, PersonalitySettingsClass>();
+
+
+        private static T Clone<T>(T o) where T : class => o == null ? null : (T)CloneMethod.Invoke(o, null);
+
+        private static bool WearsFbaCarrier(SAINBotInfoClass info) =>
+            info?.Profile?.BotOwner?.Profile?.Inventory?.Equipment?.GetSlot(EquipmentSlot.ArmorVest)?.ContainedItem?.StringTemplateId == FbaCarrier;
+
+        /// <summary>
+        /// Armored GigaChad: a copy of the active GigaChad settings with AggressionCoef x ArmoredGigaChadAggression
+        /// (SAIN: search starts sooner, ground is held longer), full suppression resistance (SAIN averages it with the
+        /// bot-type value) and the Wreckless search block (charges noises, short search wait, sprints while searching).
+        /// One copy per preset object, so preset reloads are picked up. The original settings are never modified.
+        /// </summary>
+        private static PersonalitySettingsClass Berserk(PersonalityDictionary dict, PersonalitySettingsClass giga, string nick)
+        {
+            var cfg = ServerSettings.Get();
+            if (!cfg.ArmoredGigaChadBerserk || giga?.Behavior?.General == null || giga.Difficulty == null) return giga;
+            if (!BerserkCache.TryGetValue(giga, out var b))
+            {
+                b = Clone(giga);
+                b.Behavior = Clone(giga.Behavior);
+                b.Behavior.General = Clone(giga.Behavior.General);
+                b.Behavior.General.SuppressionResistance = 1f;
+                b.Difficulty = Clone(giga.Difficulty);
+                b.Difficulty.AggressionCoef *= Math.Max(0.1f, cfg.ArmoredGigaChadAggression);
+                if (dict.TryGetValue(EPersonality.Wreckless, out var w) && w?.Behavior?.Search != null)
+                    b.Behavior.Search = w.Behavior.Search;
+                BerserkCache.Add(giga, b);
+                Log.LogInfo($"[FBA-Client] armored GigaChad berserk settings: AggressionCoef {giga.Difficulty.AggressionCoef} -> {b.Difficulty.AggressionCoef}, " +
+                    $"SuppressionResistance 1, search {b.Behavior.Search?.HeardFromPeaceBehavior}");
+            }
+            Log.LogInfo("[FBA-Client] armored GigaChad berserk: " + nick.Trim(MarkerChars));
+            return b;
+        }
+
         private static bool GetPersonalityPre(PersonalityDictionary __instance, SAINBotInfoClass infoClass,
             ref PersonalitySettingsClass settings, ref EPersonality __result)
         {
             try
             {
                 var nick = infoClass?.Profile?.BotOwner?.Profile?.Nickname;
-                if (string.IsNullOrEmpty(nick)) return true;
-                for (int i = 0; i < _markers.Length; i++)
-                {
-                    if (!nick.Contains(_markers[i])) continue;
-                    if (!__instance.TryGetValue(Order[i], out var s)) return true;
-                    settings = s;
-                    __result = Order[i];
-                    return false;
-                }
+                var v = Decode(nick);
+                if (v < 0) return true;
+                var personality = (EPersonality)v;
+                if (!__instance.TryGetValue(personality, out var s)) return true;
+                if (personality == EPersonality.GigaChad && WearsFbaCarrier(infoClass)) s = Berserk(__instance, s, nick);
+                settings = s;
+                __result = personality;
+                return false;
             }
             catch (Exception ex) { Log.LogWarning("[FBA-Client] marker personality failed: " + ex.Message); }
             return true;

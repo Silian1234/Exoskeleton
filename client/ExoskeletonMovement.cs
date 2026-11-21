@@ -18,12 +18,12 @@ namespace FullBodyArmorClient
         // per-tier values: ExoTiers (sprint, stamina, overweight, jump)
         private static readonly AccessTools.FieldRef<MovementContext, Player> MovementPlayer =
             AccessTools.FieldRefAccess<MovementContext, Player>("_player");
-        private static readonly ConditionalWeakTable<BasePhysicalClass, object> ShiftedLimits = new();
+        private static readonly ConditionalWeakTable<PhysicalBase, object> ShiftedLimits = new();
 
         // resolved at runtime
-        private static AccessTools.FieldRef<PlayerPhysicalClass, Player> _physicalPlayer;   // PlayerPhysicalClass.Player_0
-        private static FieldInfo _jumpImpulse;                                               // JumpStateClass.Vector3_1
-        private static FieldInfo _staminaPool, _handsPool;                                   // BasePhysicalClass.Stamina / HandsStamina
+        private static AccessTools.FieldRef<Physical, Player> _physicalPlayer;   // Physical.Player_0
+        private static FieldInfo _jumpImpulse;                                               // JumpPlayerState.Vector3_1
+        private static FieldInfo _staminaPool, _handsPool;                                   // PhysicalBase.Stamina / HandsStamina
         private static FieldInfo _consumptionType;                                           // <consumption>.ConsumptionType
         private static object _sprintConsumption;                                            // EConsumptionType.Sprint
 
@@ -38,7 +38,7 @@ namespace FullBodyArmorClient
 
             Try("jump height", () =>
             {
-                var enter = AccessTools.DeclaredMethod(typeof(JumpStateClass), nameof(JumpStateClass.Enter));
+                var enter = AccessTools.DeclaredMethod(typeof(JumpPlayerState), nameof(JumpPlayerState.Enter));
                 _jumpImpulse = ExoResolve.LastStoredField(enter, typeof(Vector3), "jump impulse");
                 Install(harmony, enter, postfix: nameof(JumpPostfix));
             });
@@ -47,19 +47,19 @@ namespace FullBodyArmorClient
             // (the same input stimulator buffs use), so the game's own limit formula and the inventory UI pick it up.
             Try("weight limits", () =>
             {
-                _physicalPlayer = AccessTools.FieldRefAccess<PlayerPhysicalClass, Player>(
-                    ExoResolve.SingleField(typeof(PlayerPhysicalClass), typeof(Player), "physical owner"));
+                _physicalPlayer = AccessTools.FieldRefAccess<Physical, Player>(
+                    ExoResolve.SingleField(typeof(Physical), typeof(Player), "physical owner"));
                 MethodInfo getter = null;
                 for (var t = typeof(EFT.HealthSystem.ActiveHealthController); t != null && getter == null; t = t.BaseType)
                     getter = t.GetMethod("get_CarryingWeightAbsoluteModifier", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                 Install(harmony, getter ?? throw new MissingMethodException("CarryingWeightAbsoluteModifier getter"), postfix: nameof(CarryWeightPostfix));
-                Install(harmony, AccessTools.DeclaredMethod(typeof(BasePhysicalClass), nameof(BasePhysicalClass.LateUpdate)), prefix: nameof(WeightRefreshPrefix));
+                Install(harmony, AccessTools.DeclaredMethod(typeof(PhysicalBase), nameof(PhysicalBase.LateUpdate)), prefix: nameof(WeightRefreshPrefix));
             });
 
             Try("stamina drain", () =>
             {
-                _staminaPool = AccessTools.Field(typeof(BasePhysicalClass), "Stamina") ?? throw new MissingFieldException("Stamina");
-                _handsPool = AccessTools.Field(typeof(BasePhysicalClass), "HandsStamina") ?? throw new MissingFieldException("HandsStamina");
+                _staminaPool = AccessTools.Field(typeof(PhysicalBase), "Stamina") ?? throw new MissingFieldException("Stamina");
+                _handsPool = AccessTools.Field(typeof(PhysicalBase), "HandsStamina") ?? throw new MissingFieldException("HandsStamina");
                 var poolType = _staminaPool.FieldType;                                  // GClass774
                 var consume = AccessTools.DeclaredMethod(poolType, "Consume") ?? throw new MissingMethodException(poolType.Name, "Consume");
                 var process = AccessTools.DeclaredMethod(poolType, "Process") ?? throw new MissingMethodException(poolType.Name, "Process");
@@ -86,8 +86,8 @@ namespace FullBodyArmorClient
             harmony.Patch(method, prefix: Hook(prefix), postfix: Hook(postfix), transpiler: Hook(transpiler));
         }
 
-        private static Player PhysicalPlayer(BasePhysicalClass physical) =>
-            physical is PlayerPhysicalClass p && _physicalPlayer != null ? _physicalPlayer(p) : null;
+        private static Player PhysicalPlayer(PhysicalBase physical) =>
+            physical is Physical p && _physicalPlayer != null ? _physicalPlayer(p) : null;
 
         // ---- sprint ----
         private static bool IsLocal(Player p) => p != null && ReferenceEquals(Singleton<GameWorld>.Instance?.MainPlayer, p);
@@ -108,7 +108,7 @@ namespace FullBodyArmorClient
         }
 
         // ---- jump ----
-        private static void JumpPostfix(JumpStateClass __instance)
+        private static void JumpPostfix(JumpPlayerState __instance)
         {
             int tier = ExoTiers.Tier(MovementPlayer(__instance.MovementContext));
             if (_jumpImpulse == null || tier == 0) return;
@@ -134,7 +134,7 @@ namespace FullBodyArmorClient
         }
 
         // re-run the game's limit calculation when the local player's suit tier changes
-        private static void WeightRefreshPrefix(BasePhysicalClass __instance)
+        private static void WeightRefreshPrefix(PhysicalBase __instance)
         {
             var p = PhysicalPlayer(__instance);
             if (!IsLocal(p)) return;
