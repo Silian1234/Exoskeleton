@@ -1,0 +1,7 @@
+{
+  "TestScavsWearCarrier": false,
+  "GigaChadArmorEnabled": true,
+  "ArmoredGigaChadShare": 0.2,
+  "Class6Share": 0.5,
+  "SainPluginDir": "../BepInEx/plugins/SAIN"
+}

@@ -1,0 +1,1400 @@
+[
+ {
+  "name": "M4A1",
+  "weapon": "Colt M4A1 5.56x45 assault rifle",
+  "root": "7c11c05dff7b9c8f9a4cbd78",
+  "caliber": "Caliber556x45NATO",
+  "ammo": "601949593ae8f707c4608daa",
+  "items": [
+   {
+    "_id": "7c11c05dff7b9c8f9a4cbd78",
+    "_tpl": "5447a9cd4bdc2dbd208b4567",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "7f6c813ebe559c854d6e2aad",
+    "_tpl": "5a33e75ac4a2826c6e06d759",
+    "parentId": "7c11c05dff7b9c8f9a4cbd78",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "4ebbd0c6d548d393c5f96e75",
+    "_tpl": "63f5ed14534b2c3d5479a677",
+    "parentId": "7c11c05dff7b9c8f9a4cbd78",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "c454fa23d827923c76e6b5d1",
+    "_tpl": "5aa66c72e5b5b00016327c93",
+    "parentId": "4ebbd0c6d548d393c5f96e75",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "7fa2dd80f7a7e06d7c1c4009",
+    "_tpl": "57ae0171245977343c27bfcf",
+    "parentId": "c454fa23d827923c76e6b5d1",
+    "slotId": "mod_scope_001"
+   },
+   {
+    "_id": "11d31690a8ff606eb0ecc1be",
+    "_tpl": "5c0e2f94d174af029f650d56",
+    "parentId": "4ebbd0c6d548d393c5f96e75",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "9f51f7f7c0fa631639aae99a",
+    "_tpl": "5cf6937cd7f00c056c53fb39",
+    "parentId": "11d31690a8ff606eb0ecc1be",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "ca8f3b30ad77224d67e803e1",
+    "_tpl": "63d3ce281fe77d0f2801859e",
+    "parentId": "11d31690a8ff606eb0ecc1be",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "03337b166af8e49560c2be07",
+    "_tpl": "5c78f2492e221600114c9f04",
+    "parentId": "4ebbd0c6d548d393c5f96e75",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "0d44c9c80f1573eea856fe71",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "03337b166af8e49560c2be07",
+    "slotId": "mod_mount_000"
+   },
+   {
+    "_id": "a08b99454647de89e806bc52",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "03337b166af8e49560c2be07",
+    "slotId": "mod_mount_001"
+   },
+   {
+    "_id": "842f9fdd7224e5ebd25b6b5c",
+    "_tpl": "5b7be4895acfc400170e2dd5",
+    "parentId": "03337b166af8e49560c2be07",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "fb2d98787303e00f3b21ea4f",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "842f9fdd7224e5ebd25b6b5c",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "f07fe1e33fbc729109a6cb24",
+    "_tpl": "5dfa3d950dee1b22f862eae0",
+    "parentId": "03337b166af8e49560c2be07",
+    "slotId": "mod_sight_front"
+   },
+   {
+    "_id": "f350209e6174543265c588f6",
+    "_tpl": "5c78f2882e22165df16b832e",
+    "parentId": "03337b166af8e49560c2be07",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "12e60a65d48e4229c9481201",
+    "_tpl": "5dfa3d7ac41b2312ea33362a",
+    "parentId": "4ebbd0c6d548d393c5f96e75",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "bba31f985ef40295fab98f0d",
+    "_tpl": "5c793fb92e221644f31bfb64",
+    "parentId": "7c11c05dff7b9c8f9a4cbd78",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "340b857972beb75e685e947c",
+    "_tpl": "5b2240bf5acfc40dc528af69",
+    "parentId": "7c11c05dff7b9c8f9a4cbd78",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "eafb20ee13aea54bc9c48755",
+    "_tpl": "6761765f1f08ed5e8800b7a6",
+    "parentId": "7c11c05dff7b9c8f9a4cbd78",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "HK416A5",
+  "weapon": "HK 416A5 5.56x45 assault rifle",
+  "root": "c70a604344f2b21279020a74",
+  "caliber": "Caliber556x45NATO",
+  "ammo": "601949593ae8f707c4608daa",
+  "items": [
+   {
+    "_id": "c70a604344f2b21279020a74",
+    "_tpl": "5bb2475ed4351e00853264e3",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "21eac36f1a8614399fa0bff5",
+    "_tpl": "5d025cc1d7ad1a53845279ef",
+    "parentId": "c70a604344f2b21279020a74",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "b65912836ef9394655747d42",
+    "_tpl": "5bb20d53d4351e4502010a69",
+    "parentId": "c70a604344f2b21279020a74",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "a655ad912bbf5c4a965e648c",
+    "_tpl": "5aa66c72e5b5b00016327c93",
+    "parentId": "b65912836ef9394655747d42",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "b64eee382e9f9732773c14b4",
+    "_tpl": "57ae0171245977343c27bfcf",
+    "parentId": "a655ad912bbf5c4a965e648c",
+    "slotId": "mod_scope_001"
+   },
+   {
+    "_id": "8072799da537901b73929a75",
+    "_tpl": "5bb20dadd4351e00367faeff",
+    "parentId": "b65912836ef9394655747d42",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "52bcdf8e76e7d9abfc6cfbf3",
+    "_tpl": "5f6372e2865db925d54f3869",
+    "parentId": "8072799da537901b73929a75",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "8ea3aba3b782033735f15434",
+    "_tpl": "5f6339d53ada5942720e2dc3",
+    "parentId": "52bcdf8e76e7d9abfc6cfbf3",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "f3cb8fecb37f8cc701e66c2f",
+    "_tpl": "5bb20dcad4351e3bac1212da",
+    "parentId": "8072799da537901b73929a75",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "9d02c37744458d540c4d292c",
+    "_tpl": "5c6d11152e2216000f2003e7",
+    "parentId": "b65912836ef9394655747d42",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "f6312de70342ea36a7b8c57c",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "9d02c37744458d540c4d292c",
+    "slotId": "mod_mount_000"
+   },
+   {
+    "_id": "d7139e0f05cb07947c8f5664",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "9d02c37744458d540c4d292c",
+    "slotId": "mod_mount_001"
+   },
+   {
+    "_id": "027fcc17152272ec924358a2",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "9d02c37744458d540c4d292c",
+    "slotId": "mod_mount_002"
+   },
+   {
+    "_id": "f15c7c830a7b511159a5c39a",
+    "_tpl": "5b7be4895acfc400170e2dd5",
+    "parentId": "9d02c37744458d540c4d292c",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "af82aba8b4b8aeccf7a8e381",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "f15c7c830a7b511159a5c39a",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "fb6d82cd07a079acf1be4089",
+    "_tpl": "5dfa3d7ac41b2312ea33362a",
+    "parentId": "b65912836ef9394655747d42",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "2dd05117729f6b666cbdbf50",
+    "_tpl": "5bb20e58d4351e00320205d7",
+    "parentId": "c70a604344f2b21279020a74",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "4de0965c5dc8a06b9b6b3b3c",
+    "_tpl": "6516e91f609aaf354b34b3e2",
+    "parentId": "2dd05117729f6b666cbdbf50",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "4421d5bba5dffeaf755be4ea",
+    "_tpl": "6516e9bc5901745209404287",
+    "parentId": "4de0965c5dc8a06b9b6b3b3c",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "a709aa8053e9e2e6b0860e9d",
+    "_tpl": "5b2240bf5acfc40dc528af69",
+    "parentId": "c70a604344f2b21279020a74",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "cde53db12034676408d5fdd2",
+    "_tpl": "6761765f1f08ed5e8800b7a6",
+    "parentId": "c70a604344f2b21279020a74",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "Mk47 Mutant",
+  "weapon": "CMMG Mk47 Mutant 7.62x39 assault rifle",
+  "root": "830763f6d4cd6ac6489a844e",
+  "caliber": "Caliber762x39",
+  "ammo": "601aa3d2b2bcb34913271e6d",
+  "items": [
+   {
+    "_id": "830763f6d4cd6ac6489a844e",
+    "_tpl": "606587252535c57a13424cfd",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "8cd7747cbaddbf96fb0a3edd",
+    "_tpl": "5d025cc1d7ad1a53845279ef",
+    "parentId": "830763f6d4cd6ac6489a844e",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "6f5b76159fc568f9b74e493e",
+    "_tpl": "606587a88900dc2d9a55b659",
+    "parentId": "830763f6d4cd6ac6489a844e",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "2729e0cb9d2806fdca2b532b",
+    "_tpl": "5aa66c72e5b5b00016327c93",
+    "parentId": "6f5b76159fc568f9b74e493e",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "d1f1136fdc44b4262b2a62d6",
+    "_tpl": "57ae0171245977343c27bfcf",
+    "parentId": "2729e0cb9d2806fdca2b532b",
+    "slotId": "mod_scope_001"
+   },
+   {
+    "_id": "36a3a98edd0c3b7a3f98782d",
+    "_tpl": "6065878ac9cf8012264142fd",
+    "parentId": "6f5b76159fc568f9b74e493e",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "66345b32f54b7e740eadd785",
+    "_tpl": "5cf78496d7f00c065703d6ca",
+    "parentId": "36a3a98edd0c3b7a3f98782d",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "1666965f1ebd2ff3616478db",
+    "_tpl": "5c878e9d2e2216000f201903",
+    "parentId": "66345b32f54b7e740eadd785",
+    "slotId": "mod_muzzle_000"
+   },
+   {
+    "_id": "0e03c9ca75b98768b8fd00ed",
+    "_tpl": "5cf78720d7f00c06595bc93e",
+    "parentId": "66345b32f54b7e740eadd785",
+    "slotId": "mod_muzzle_001"
+   },
+   {
+    "_id": "d076c1eb5fc59385048baa54",
+    "_tpl": "6065dc8a132d4d12c81fd8e3",
+    "parentId": "36a3a98edd0c3b7a3f98782d",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "e4a9ec63e47cbec1a253482f",
+    "_tpl": "5df916dfbb49d91fb446d6b9",
+    "parentId": "6f5b76159fc568f9b74e493e",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "1dcad932c3d9ee0cb6585457",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "e4a9ec63e47cbec1a253482f",
+    "slotId": "mod_mount_000"
+   },
+   {
+    "_id": "2ab1368915817d3ff75fb091",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "e4a9ec63e47cbec1a253482f",
+    "slotId": "mod_mount_002"
+   },
+   {
+    "_id": "173b05d84a15d0b0d3f4645a",
+    "_tpl": "5dfa3d950dee1b22f862eae0",
+    "parentId": "e4a9ec63e47cbec1a253482f",
+    "slotId": "mod_sight_front"
+   },
+   {
+    "_id": "1ba5cee2db578877ed87b094",
+    "_tpl": "5b7be4895acfc400170e2dd5",
+    "parentId": "e4a9ec63e47cbec1a253482f",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "1be5d8ba16bb58e454746770",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "1ba5cee2db578877ed87b094",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "49ee00e35714e162da7c7119",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "e4a9ec63e47cbec1a253482f",
+    "slotId": "mod_mount_001"
+   },
+   {
+    "_id": "46545126ee1e17f6383b579a",
+    "_tpl": "5dfa3d7ac41b2312ea33362a",
+    "parentId": "6f5b76159fc568f9b74e493e",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "563326573537cae9ebf29d1b",
+    "_tpl": "5c793fb92e221644f31bfb64",
+    "parentId": "830763f6d4cd6ac6489a844e",
+    "slotId": "mod_stock_001"
+   },
+   {
+    "_id": "9e1428d3a375d65e7a32bddf",
+    "_tpl": "6516e91f609aaf354b34b3e2",
+    "parentId": "563326573537cae9ebf29d1b",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "e6e48cfe128bf73dc8abd1e2",
+    "_tpl": "6516e9bc5901745209404287",
+    "parentId": "9e1428d3a375d65e7a32bddf",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "74685eb62373313019058805",
+    "_tpl": "606587bd6d0bd7580617bacc",
+    "parentId": "830763f6d4cd6ac6489a844e",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "be9ceda33c16cafb2d9e7816",
+    "_tpl": "5cbdc23eae9215001136a407",
+    "parentId": "830763f6d4cd6ac6489a844e",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "AK-74M",
+  "weapon": "Kalashnikov AK-74M 5.45x39 assault rifle",
+  "root": "b48a5ed7db3b4d06b34e81ca",
+  "caliber": "Caliber545x39",
+  "ammo": "5c0d5e4486f77478390952fe",
+  "items": [
+   {
+    "_id": "b48a5ed7db3b4d06b34e81ca",
+    "_tpl": "5ac4cd105acfc40016339859",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "da31d4143ca16eb233cd7997",
+    "_tpl": "5a01ad4786f77450561fda02",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "c576ac8bc0d9c8ac575566ab",
+    "_tpl": "5f6331e097199b7db2128dc2",
+    "parentId": "da31d4143ca16eb233cd7997",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "7e3f68719640380c0ab16760",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "c576ac8bc0d9c8ac575566ab",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "b9d08ce1d5dad84b5ab6f428",
+    "_tpl": "591c4efa86f7741030027726",
+    "parentId": "c576ac8bc0d9c8ac575566ab",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "e7d1c87b00c018d7354324ff",
+    "_tpl": "591c4e1186f77410354b316e",
+    "parentId": "b9d08ce1d5dad84b5ab6f428",
+    "slotId": "mod_tactical"
+   },
+   {
+    "_id": "71800142c8a60d9f72533ef1",
+    "_tpl": "5f633f791b231926f2329f13",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "954113e6a6678a98121a400c",
+    "_tpl": "6087e663132d4d12c81fd96b",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "bcfc0c45b49a7db1c4504475",
+    "_tpl": "5649af094bdc2df8348b4586",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "ffcac794e685c601b9015bcd",
+    "_tpl": "628a7b23b0f75035732dd565",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "efadb46d41592add47251146",
+    "_tpl": "6761779c48fa5c377e06fc3f",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "c14d7e4453188668228a073c",
+    "_tpl": "6130ca3fd92c473c77020dbd",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "5291fceb3fe6b2950f432260",
+    "_tpl": "5bed625c0db834001c062946",
+    "parentId": "b48a5ed7db3b4d06b34e81ca",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "AKM",
+  "weapon": "Kalashnikov AKM 7.62x39 assault rifle",
+  "root": "7801bee0cb47b57a32d5a970",
+  "caliber": "Caliber762x39",
+  "ammo": "601aa3d2b2bcb34913271e6d",
+  "items": [
+   {
+    "_id": "7801bee0cb47b57a32d5a970",
+    "_tpl": "59d6088586f774275f37482f",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "9978d2ab7be4cb75bbea42ef",
+    "_tpl": "5a01ad4786f77450561fda02",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "b353212ddf1bb10b870f5971",
+    "_tpl": "5f6331e097199b7db2128dc2",
+    "parentId": "9978d2ab7be4cb75bbea42ef",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "06e226b1fb26ddfd0379ce33",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "b353212ddf1bb10b870f5971",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "db8771f70efd94f0ff594954",
+    "_tpl": "591c4efa86f7741030027726",
+    "parentId": "b353212ddf1bb10b870f5971",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "053121613d8ba3816b4baac1",
+    "_tpl": "591c4e1186f77410354b316e",
+    "parentId": "db8771f70efd94f0ff594954",
+    "slotId": "mod_tactical"
+   },
+   {
+    "_id": "6411d2aee97b5e5d947a2262",
+    "_tpl": "615d8e9867085e45ef1409c6",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "eb26ab2aab121fddbad73ce9",
+    "_tpl": "5cf78496d7f00c065703d6ca",
+    "parentId": "6411d2aee97b5e5d947a2262",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "660b4d34ac2da0340b8af8ac",
+    "_tpl": "5c878e9d2e2216000f201903",
+    "parentId": "eb26ab2aab121fddbad73ce9",
+    "slotId": "mod_muzzle_000"
+   },
+   {
+    "_id": "8be8615ce36299d5d01cf0d3",
+    "_tpl": "5cf78720d7f00c06595bc93e",
+    "parentId": "eb26ab2aab121fddbad73ce9",
+    "slotId": "mod_muzzle_001"
+   },
+   {
+    "_id": "ad7ef18634778b0443b40aed",
+    "_tpl": "6087e663132d4d12c81fd96b",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "52295abb46e07a428bfa80e1",
+    "_tpl": "59d6507c86f7741b846413a2",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "ba8d9713f381eddabaabd3c0",
+    "_tpl": "628a7b23b0f75035732dd565",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "eba0093e4b28e4b777e53f97",
+    "_tpl": "6087e2a5232e5a31c233d552",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "128954986bcea91a97486851",
+    "_tpl": "6130ca3fd92c473c77020dbd",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "8a8c3b6a314ae5b0f77841d4",
+    "_tpl": "5cbdc23eae9215001136a407",
+    "parentId": "7801bee0cb47b57a32d5a970",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "AK-103",
+  "weapon": "Kalashnikov AK-103 7.62x39 assault rifle",
+  "root": "510cc06512697423ee57e8e8",
+  "caliber": "Caliber762x39",
+  "ammo": "601aa3d2b2bcb34913271e6d",
+  "items": [
+   {
+    "_id": "510cc06512697423ee57e8e8",
+    "_tpl": "5ac66d2e5acfc43b321d4b53",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "adc3c34879674a12ddbbb7db",
+    "_tpl": "5a01ad4786f77450561fda02",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "9fa8d4934562251317f3aadc",
+    "_tpl": "5f6331e097199b7db2128dc2",
+    "parentId": "adc3c34879674a12ddbbb7db",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "6549cd85f06e99dcd2d54cf1",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "9fa8d4934562251317f3aadc",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "f87dd87ff79fb3b6eb67e7d2",
+    "_tpl": "591c4efa86f7741030027726",
+    "parentId": "9fa8d4934562251317f3aadc",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "939b5a32a792c3db66015fb8",
+    "_tpl": "591c4e1186f77410354b316e",
+    "parentId": "f87dd87ff79fb3b6eb67e7d2",
+    "slotId": "mod_tactical"
+   },
+   {
+    "_id": "756f2f8c50f3b21c93fc2b43",
+    "_tpl": "5f633f791b231926f2329f13",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "b2601cce1a75d7b62819d0ed",
+    "_tpl": "6087e663132d4d12c81fd96b",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "f2a11f04e18369663047bf11",
+    "_tpl": "5649af094bdc2df8348b4586",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "7617edd2e239646412f969a6",
+    "_tpl": "628a7b23b0f75035732dd565",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "a67cf855fded19cbb9520e0f",
+    "_tpl": "6761779c48fa5c377e06fc3f",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "6c9011d9aba555d27d7175cf",
+    "_tpl": "6130ca3fd92c473c77020dbd",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "6750f8f1eb7860a5dc327192",
+    "_tpl": "5cbdc23eae9215001136a407",
+    "parentId": "510cc06512697423ee57e8e8",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "AK-12",
+  "weapon": "Kalashnikov AK-12 5.45x39 assault rifle",
+  "root": "4406250da7e595d940e79053",
+  "caliber": "Caliber545x39",
+  "ammo": "5c0d5e4486f77478390952fe",
+  "items": [
+   {
+    "_id": "4406250da7e595d940e79053",
+    "_tpl": "6499849fc93611967b034949",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "2ad9d7c6c6b54bcb7d7f151b",
+    "_tpl": "649ec107961514b22506b10c",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "3b7b954d8c040eed01e5dec6",
+    "_tpl": "649ec2af961514b22506b10f",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "81631c78be2dadafb17755e7",
+    "_tpl": "6087e663132d4d12c81fd96b",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "495d38dd71ea2f7be623a784",
+    "_tpl": "649ec2f3961514b22506b111",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "c2f75ff5e110d7c7eb443655",
+    "_tpl": "5beec9450db83400970084fd",
+    "parentId": "495d38dd71ea2f7be623a784",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "c518569cb2e0fc1b0f62e3b5",
+    "_tpl": "628a7b23b0f75035732dd565",
+    "parentId": "c2f75ff5e110d7c7eb443655",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "993aae7805475920f35122ee",
+    "_tpl": "6761779c48fa5c377e06fc3f",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_stock_001"
+   },
+   {
+    "_id": "b74fc4837761b8f18facde01",
+    "_tpl": "6130ca3fd92c473c77020dbd",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "25b536644eac6671ebef3bde",
+    "_tpl": "649ec127c93611967b034957",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "d35459047217f453446aa701",
+    "_tpl": "57ae0171245977343c27bfcf",
+    "parentId": "25b536644eac6671ebef3bde",
+    "slotId": "mod_tactical"
+   },
+   {
+    "_id": "98755cd50511e463d9fe7289",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "25b536644eac6671ebef3bde",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "5dbfab945785902f9b9e8600",
+    "_tpl": "5bed625c0db834001c062946",
+    "parentId": "4406250da7e595d940e79053",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "Vector .45",
+  "weapon": "TDI KRISS Vector Gen.2 .45 ACP submachine gun",
+  "root": "3b38c81b709b2d1211c58796",
+  "caliber": "Caliber1143x23ACP",
+  "ammo": "5efb0cabfb3e451d70735af5",
+  "items": [
+   {
+    "_id": "3b38c81b709b2d1211c58796",
+    "_tpl": "5fb64bc92b1b027b1f50bcf2",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "8714c1de79f2337c1ddcfd14",
+    "_tpl": "5dfa3d950dee1b22f862eae0",
+    "parentId": "3b38c81b709b2d1211c58796",
+    "slotId": "mod_sight_front"
+   },
+   {
+    "_id": "0c3d1ddf252fb15c2d9a8965",
+    "_tpl": "5dfa3d7ac41b2312ea33362a",
+    "parentId": "3b38c81b709b2d1211c58796",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "ba5e396a9d70aa5d98c7976d",
+    "_tpl": "591c4efa86f7741030027726",
+    "parentId": "3b38c81b709b2d1211c58796",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "7539f5ae2d7c9cb4d3906f40",
+    "_tpl": "591c4e1186f77410354b316e",
+    "parentId": "ba5e396a9d70aa5d98c7976d",
+    "slotId": "mod_tactical"
+   },
+   {
+    "_id": "17a3ce24a7a6e1c52af08f21",
+    "_tpl": "5fb655b748c711690e3a8d5a",
+    "parentId": "3b38c81b709b2d1211c58796",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "cb56e01a1634f8e57870b4af",
+    "_tpl": "5c793fb92e221644f31bfb64",
+    "parentId": "17a3ce24a7a6e1c52af08f21",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "91cccab4f92d2bbc1de562d6",
+    "_tpl": "6516e91f609aaf354b34b3e2",
+    "parentId": "cb56e01a1634f8e57870b4af",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "d244b32ca92f370997b5125b",
+    "_tpl": "6516e9bc5901745209404287",
+    "parentId": "91cccab4f92d2bbc1de562d6",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "1c760bc7c40a236056f1f4ae",
+    "_tpl": "5fb65363d1409e5ca04b54f5",
+    "parentId": "3b38c81b709b2d1211c58796",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "74132e5353507baf97eab618",
+    "_tpl": "5fb65424956329274326f316",
+    "parentId": "1c760bc7c40a236056f1f4ae",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "acb8f411167b90aaaefd201a",
+    "_tpl": "5fbb976df9986c4cff3fe5f2",
+    "parentId": "3b38c81b709b2d1211c58796",
+    "slotId": "mod_mount"
+   },
+   {
+    "_id": "b97d7cd47ffcce000dcfa393",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "acb8f411167b90aaaefd201a",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "b67e88830133f3d19ab2e550",
+    "_tpl": "5fb651dc85f90547f674b6f4",
+    "parentId": "3b38c81b709b2d1211c58796",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "Vector 9x19",
+  "weapon": "TDI KRISS Vector Gen.2 9x19 submachine gun",
+  "root": "23e4899392a44cc778bf3113",
+  "caliber": "Caliber9x19PARA",
+  "ammo": "5efb0da7a29a85116f6ea05f",
+  "items": [
+   {
+    "_id": "23e4899392a44cc778bf3113",
+    "_tpl": "5fc3f2d5900b1d5091531e57",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "795c5e96e15a80f0962bf4d1",
+    "_tpl": "5dfa3d950dee1b22f862eae0",
+    "parentId": "23e4899392a44cc778bf3113",
+    "slotId": "mod_sight_front"
+   },
+   {
+    "_id": "29f7170680ed4cac2adf2f95",
+    "_tpl": "5dfa3d7ac41b2312ea33362a",
+    "parentId": "23e4899392a44cc778bf3113",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "cb21ac22103a76e0fdd28e29",
+    "_tpl": "591c4efa86f7741030027726",
+    "parentId": "23e4899392a44cc778bf3113",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "60105f683206deb7b61fbccc",
+    "_tpl": "591c4e1186f77410354b316e",
+    "parentId": "cb21ac22103a76e0fdd28e29",
+    "slotId": "mod_tactical"
+   },
+   {
+    "_id": "ee20db414bedf4eae1c2a382",
+    "_tpl": "5fb655b748c711690e3a8d5a",
+    "parentId": "23e4899392a44cc778bf3113",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "1111dd8ddd44d558d1fd3702",
+    "_tpl": "5c793fb92e221644f31bfb64",
+    "parentId": "ee20db414bedf4eae1c2a382",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "6283c36a15bd08b93b9a62f7",
+    "_tpl": "6516e91f609aaf354b34b3e2",
+    "parentId": "1111dd8ddd44d558d1fd3702",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "c639ce9b2902fa05060a569d",
+    "_tpl": "6516e9bc5901745209404287",
+    "parentId": "6283c36a15bd08b93b9a62f7",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "9980424aba890d74cb0ebcdf",
+    "_tpl": "5fbbc366ca32ed67276c1557",
+    "parentId": "23e4899392a44cc778bf3113",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "a00db8214b33ab16140ce9b9",
+    "_tpl": "5cf6935bd7f00c06585fb791",
+    "parentId": "9980424aba890d74cb0ebcdf",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "4efc3b2b3cd54ee81d8ad64e",
+    "_tpl": "5fbb976df9986c4cff3fe5f2",
+    "parentId": "23e4899392a44cc778bf3113",
+    "slotId": "mod_mount"
+   },
+   {
+    "_id": "f60609dfcfb60cc0dbf07b27",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "4efc3b2b3cd54ee81d8ad64e",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "eb7b2798d7b7c310aa69e333",
+    "_tpl": "5a718f958dc32e00094b97e7",
+    "parentId": "23e4899392a44cc778bf3113",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "SCAR-H",
+  "weapon": "FN SCAR-H 7.62x51 assault rifle",
+  "root": "b05e91fc2b7372ea361d3626",
+  "caliber": "Caliber762x51",
+  "ammo": "5efb0c1bd79ff02a1f5e68d9",
+  "items": [
+   {
+    "_id": "b05e91fc2b7372ea361d3626",
+    "_tpl": "6183afd850224f204c1da514",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "1f3dcbfdf13e793b007d5284",
+    "_tpl": "5d025cc1d7ad1a53845279ef",
+    "parentId": "b05e91fc2b7372ea361d3626",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "46be05eb30b53d242fc423d6",
+    "_tpl": "6165adcdd3a39d50044c120f",
+    "parentId": "b05e91fc2b7372ea361d3626",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "0cdab8bef78bb672de172a2d",
+    "_tpl": "5aa66c72e5b5b00016327c93",
+    "parentId": "46be05eb30b53d242fc423d6",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "38d0dba9089dae755702dbce",
+    "_tpl": "57ae0171245977343c27bfcf",
+    "parentId": "0cdab8bef78bb672de172a2d",
+    "slotId": "mod_scope_001"
+   },
+   {
+    "_id": "ea97414070cd33e40edfd535",
+    "_tpl": "6183b0711cb55961fa0fdcad",
+    "parentId": "46be05eb30b53d242fc423d6",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "98a759a4ef1917b4d852e3cf",
+    "_tpl": "5cf78496d7f00c065703d6ca",
+    "parentId": "ea97414070cd33e40edfd535",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "cbf1b033a83c9ffc25ffdc55",
+    "_tpl": "5c878e9d2e2216000f201903",
+    "parentId": "98a759a4ef1917b4d852e3cf",
+    "slotId": "mod_muzzle_000"
+   },
+   {
+    "_id": "82598c2a38195d97b3efadb5",
+    "_tpl": "5cf78720d7f00c06595bc93e",
+    "parentId": "98a759a4ef1917b4d852e3cf",
+    "slotId": "mod_muzzle_001"
+   },
+   {
+    "_id": "d95fd1343081a283872ff892",
+    "_tpl": "5dfa3d7ac41b2312ea33362a",
+    "parentId": "46be05eb30b53d242fc423d6",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "ff68b7165b95236c4ff73a63",
+    "_tpl": "5dfa3d950dee1b22f862eae0",
+    "parentId": "46be05eb30b53d242fc423d6",
+    "slotId": "mod_sight_front"
+   },
+   {
+    "_id": "df805dd5e80729c263654c02",
+    "_tpl": "66ffe811f5d758d71101e89a",
+    "parentId": "46be05eb30b53d242fc423d6",
+    "slotId": "mod_mount_000"
+   },
+   {
+    "_id": "8b4e1445c2360ac8c0db25c2",
+    "_tpl": "5b7be46e5acfc400170e2dcf",
+    "parentId": "df805dd5e80729c263654c02",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "f6d791ec146b573f060dff21",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "8b4e1445c2360ac8c0db25c2",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "6088cc482d264e1686311c23",
+    "_tpl": "66ffea456be19fd81e0ef742",
+    "parentId": "df805dd5e80729c263654c02",
+    "slotId": "mod_mount_002"
+   },
+   {
+    "_id": "56fb820764d282eaa53ebc64",
+    "_tpl": "61816734d8e3106d9806c1f3",
+    "parentId": "b05e91fc2b7372ea361d3626",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "f3e0ddb5b9acc575fbf5ab8f",
+    "_tpl": "66ffc2bd132225f0fe0611d8",
+    "parentId": "56fb820764d282eaa53ebc64",
+    "slotId": "mod_stock_001"
+   },
+   {
+    "_id": "bf28d73f5da4352d274dad19",
+    "_tpl": "618167441cb55961fa0fdc71",
+    "parentId": "56fb820764d282eaa53ebc64",
+    "slotId": "mod_stock_002"
+   },
+   {
+    "_id": "2618db2f4de9d09ba74b126d",
+    "_tpl": "6181688c6c780c1e710c9b04",
+    "parentId": "b05e91fc2b7372ea361d3626",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "b5b4a9772d1b6b54489299f3",
+    "_tpl": "618168dc8004cc50514c34fc",
+    "parentId": "b05e91fc2b7372ea361d3626",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "MCX-SPEAR",
+  "weapon": "SIG MCX-SPEAR 6.8x51 assault rifle",
+  "root": "f6f19ee700b9c70fa04e9b88",
+  "caliber": "Caliber68x51",
+  "ammo": "6529243824cbe3c74a05e5c1",
+  "items": [
+   {
+    "_id": "f6f19ee700b9c70fa04e9b88",
+    "_tpl": "65290f395ae2ae97b80fdf2d",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "5c9e98811a4b06b6ca27e616",
+    "_tpl": "5d025cc1d7ad1a53845279ef",
+    "parentId": "f6f19ee700b9c70fa04e9b88",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "bdc055ffe09d6b56ee73e1fc",
+    "_tpl": "6529119424cbe3c74a05e5bb",
+    "parentId": "f6f19ee700b9c70fa04e9b88",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "3a6cc6bce4aaba1103472aa9",
+    "_tpl": "5aa66c72e5b5b00016327c93",
+    "parentId": "bdc055ffe09d6b56ee73e1fc",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "cb34b131f0a063cfd83367d0",
+    "_tpl": "57ae0171245977343c27bfcf",
+    "parentId": "3a6cc6bce4aaba1103472aa9",
+    "slotId": "mod_scope_001"
+   },
+   {
+    "_id": "70f3ff5beeffd3d014538c8e",
+    "_tpl": "652910565ae2ae97b80fdf35",
+    "parentId": "bdc055ffe09d6b56ee73e1fc",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "1901e81bd0eb0a901affc2fc",
+    "_tpl": "6529113b5ae2ae97b80fdf39",
+    "parentId": "70f3ff5beeffd3d014538c8e",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "06a572eefecc988a82e7bdb9",
+    "_tpl": "652910bc24cbe3c74a05e5b9",
+    "parentId": "70f3ff5beeffd3d014538c8e",
+    "slotId": "mod_gas_block"
+   },
+   {
+    "_id": "bca21e88ef60ca530c060375",
+    "_tpl": "652910ef50dc782999054b97",
+    "parentId": "bdc055ffe09d6b56ee73e1fc",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "abe5d7e022c89bc29530802d",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "bca21e88ef60ca530c060375",
+    "slotId": "mod_mount_000"
+   },
+   {
+    "_id": "150502ff49d42087783ed9eb",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "bca21e88ef60ca530c060375",
+    "slotId": "mod_mount_001"
+   },
+   {
+    "_id": "1e4349a7b7264dcbe383f122",
+    "_tpl": "5dfa3d950dee1b22f862eae0",
+    "parentId": "bca21e88ef60ca530c060375",
+    "slotId": "mod_sight_front"
+   },
+   {
+    "_id": "3fd525399cf584b396fa1bda",
+    "_tpl": "5b7be4895acfc400170e2dd5",
+    "parentId": "bca21e88ef60ca530c060375",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "26c81c7886642ccce4b59fc3",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "3fd525399cf584b396fa1bda",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "a145bdbee348c1af75df4dd6",
+    "_tpl": "6269220d70b6c02e665f2635",
+    "parentId": "bca21e88ef60ca530c060375",
+    "slotId": "mod_mount_002"
+   },
+   {
+    "_id": "43ea79db41da942b89e65900",
+    "_tpl": "5dfa3d7ac41b2312ea33362a",
+    "parentId": "bdc055ffe09d6b56ee73e1fc",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "0342b67f105473d827c64c3d",
+    "_tpl": "58ac1bf086f77420ed183f9f",
+    "parentId": "f6f19ee700b9c70fa04e9b88",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "27a404c606780a9ec05d3efe",
+    "_tpl": "5c793fb92e221644f31bfb64",
+    "parentId": "0342b67f105473d827c64c3d",
+    "slotId": "mod_stock"
+   },
+   {
+    "_id": "d6ed38a3278a975345f01a64",
+    "_tpl": "6516e91f609aaf354b34b3e2",
+    "parentId": "27a404c606780a9ec05d3efe",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "4d936b913f176d38d8525082",
+    "_tpl": "6516e9bc5901745209404287",
+    "parentId": "d6ed38a3278a975345f01a64",
+    "slotId": "mod_stock_000"
+   },
+   {
+    "_id": "4ca6c6468a80e4ef038679a2",
+    "_tpl": "6529109524cbe3c74a05e5b7",
+    "parentId": "f6f19ee700b9c70fa04e9b88",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "39b646f9c1dc4df984cc444c",
+    "_tpl": "6761770e48fa5c377e06fc3c",
+    "parentId": "f6f19ee700b9c70fa04e9b88",
+    "slotId": "mod_magazine"
+   }
+  ]
+ },
+ {
+  "name": "RPK-16",
+  "weapon": "RPK-16 5.45x39 light machine gun",
+  "root": "bee8ee0985a80f3a75d203b4",
+  "caliber": "Caliber545x39",
+  "ammo": "5c0d5e4486f77478390952fe",
+  "items": [
+   {
+    "_id": "bee8ee0985a80f3a75d203b4",
+    "_tpl": "5beed0f50db834001c062b12",
+    "upd": {
+     "Repairable": {
+      "Durability": 100,
+      "MaxDurability": 100
+     },
+     "FireMode": {
+      "FireMode": "fullauto"
+     }
+    }
+   },
+   {
+    "_id": "2fa08fe165211e7ced8ef8f6",
+    "_tpl": "6087e663132d4d12c81fd96b",
+    "parentId": "bee8ee0985a80f3a75d203b4",
+    "slotId": "mod_pistol_grip"
+   },
+   {
+    "_id": "b0d6d12f32744aa2fba9ff05",
+    "_tpl": "5beec91a0db834001961942d",
+    "parentId": "bee8ee0985a80f3a75d203b4",
+    "slotId": "mod_reciever"
+   },
+   {
+    "_id": "90179faec43e0a8ab4b0e19f",
+    "_tpl": "5beec9450db83400970084fd",
+    "parentId": "b0d6d12f32744aa2fba9ff05",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "55d91d6eb2eaaa1236d9ca80",
+    "_tpl": "628a7b23b0f75035732dd565",
+    "parentId": "90179faec43e0a8ab4b0e19f",
+    "slotId": "mod_sight_rear"
+   },
+   {
+    "_id": "3f3051ea4b539824f420561d",
+    "_tpl": "6130ca3fd92c473c77020dbd",
+    "parentId": "bee8ee0985a80f3a75d203b4",
+    "slotId": "mod_charge"
+   },
+   {
+    "_id": "61f1a23f62f53a893fc5f76a",
+    "_tpl": "6761779c48fa5c377e06fc3f",
+    "parentId": "bee8ee0985a80f3a75d203b4",
+    "slotId": "mod_stock_001"
+   },
+   {
+    "_id": "5ab3df799cf7491fd96d7c96",
+    "_tpl": "5beec3e30db8340019619424",
+    "parentId": "bee8ee0985a80f3a75d203b4",
+    "slotId": "mod_handguard"
+   },
+   {
+    "_id": "8527f18a6a6108db049f15c4",
+    "_tpl": "57ae0171245977343c27bfcf",
+    "parentId": "5ab3df799cf7491fd96d7c96",
+    "slotId": "mod_scope"
+   },
+   {
+    "_id": "db745104f61280fe5bfa4502",
+    "_tpl": "5b057b4f5acfc4771e1bd3e9",
+    "parentId": "5ab3df799cf7491fd96d7c96",
+    "slotId": "mod_foregrip"
+   },
+   {
+    "_id": "fba01a1f50187d3b895fadd1",
+    "_tpl": "5beec1bd0db834001e6006f3",
+    "parentId": "bee8ee0985a80f3a75d203b4",
+    "slotId": "mod_barrel"
+   },
+   {
+    "_id": "401469c5a7a2a4ddd2d9e070",
+    "_tpl": "5cc9a96cd7f00c011c04e04a",
+    "parentId": "fba01a1f50187d3b895fadd1",
+    "slotId": "mod_muzzle"
+   },
+   {
+    "_id": "7b6afcdc68255d2484b255e1",
+    "_tpl": "5bed625c0db834001c062946",
+    "parentId": "bee8ee0985a80f3a75d203b4",
+    "slotId": "mod_magazine"
+   }
+  ]
+ }
+]

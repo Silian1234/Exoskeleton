@@ -1,0 +1,36 @@
+{
+    "manifest": [
+        {
+            "key": "assets/content/items/equipment/fba/item_equipment_fba_carrier.bundle",
+            "dependencyKeys": [
+                "shaders",
+                "cubemaps",
+                "assets/commonassets/physics/physicsmaterials.bundle"
+            ]
+        },
+        {
+            "key": "assets/content/items/equipment/exoskeleton/item_equipment_exoskeleton.bundle",
+            "dependencyKeys": [
+                "shaders",
+                "cubemaps",
+                "assets/commonassets/physics/physicsmaterials.bundle"
+            ]
+        },
+        {
+            "key": "assets/content/items/equipment/exoskeleton/item_equipment_exoskeleton_t2.bundle",
+            "dependencyKeys": [
+                "shaders",
+                "cubemaps",
+                "assets/commonassets/physics/physicsmaterials.bundle"
+            ]
+        },
+        {
+            "key": "assets/content/items/equipment/exoskeleton/item_equipment_exoskeleton_t3.bundle",
+            "dependencyKeys": [
+                "shaders",
+                "cubemaps",
+                "assets/commonassets/physics/physicsmaterials.bundle"
+            ]
+        }
+    ]
+}
