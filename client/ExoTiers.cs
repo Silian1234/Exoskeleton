@@ -1,4 +1,5 @@
 // EXO tier table (approved by the user 2026-11-21). Index 0 = not wearing an exoskeleton.
+// The server shows the same numbers in the item descriptions (server/Exoskeleton.cs Stats): keep both in sync.
 using EFT;
 using EFT.InventoryLogic;
 

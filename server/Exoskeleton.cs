@@ -137,7 +137,8 @@ public class ExoskeletonLoader(TemplateTable templates, TradersTable traders, Gl
                 NewItemName = string.Empty,
                 ItemTplToClone = new MongoId(Donor), NewId = t.Id, ParentId = source.Parent.ToString(),
                 HandbookParentId = ArmorHandbook, HandbookPriceRoubles = t.Price, FleaPriceRoubles = t.Price,
-                Locales = Texts.ItemWith($"{t.Key}.name", $"{t.Key}.short", $"{t.Key}.desc", ("rule", RuleText))
+                Locales = Texts.ItemWith($"{t.Key}.name", $"{t.Key}.short", $"{t.Key}.desc", ("rule", RuleText),
+                    ("stats", lang => StatsText(lang, t.Key)))
             });
             if (result?.Success != true || !items.TryGetValue(id, out var item) || item.Properties == null)
                 throw new InvalidOperationException($"{t.ShortEn} clone failed: " + string.Join("; ", result?.Errors ?? new List<string>()));
@@ -258,6 +259,26 @@ public class ExoskeletonLoader(TemplateTable templates, TradersTable traders, Gl
             } } }
         };
     }).ToList();
+
+    // Tier stats shown in the item descriptions. Must match the client table (client/ExoTiers.cs), which applies them.
+    //                                 sprint stamina weight jump melee fall  vault recoil
+    private static readonly Dictionary<string, double[]> Stats = new()
+    {
+        ["exo1"] = new[] { 1.15, 0.75, 15, 1.25, 2.0, 0.5, 1.15, 1.00 },
+        ["exo2"] = new[] { 1.20, 0.65, 25, 1.35, 2.5, 1.0, 1.20, 0.95 },
+        ["exo3"] = new[] { 1.25, 0.55, 35, 1.45, 3.0, 1.5, 1.25, 0.90 },
+    };
+
+    private static string StatsText(string lang, string key)
+    {
+        var v = Stats[key];
+        var dec = Texts.Get(lang, "exo.dec");
+        string F(double x, string format) => x.ToString(format, System.Globalization.CultureInfo.InvariantCulture).Replace(".", dec);
+        return Texts.Get(lang, "exo.stats")
+            .Replace("{sprint}", F(v[0], "0.00")).Replace("{stamina}", F(v[1], "0.00")).Replace("{weight}", F(v[2], "0"))
+            .Replace("{jump}", F(v[3], "0.00")).Replace("{melee}", F(v[4], "0.0")).Replace("{fall}", F(v[5], "0.0"))
+            .Replace("{vault}", F(v[6], "0.00")).Replace("{recoil}", F(v[7], "0.00"));
+    }
 
     /// <summary>Description sentence matching config.json ExoAllowArmored* (order: helmets, masks, glasses, rigs).</summary>
     private static string RuleText(string lang)

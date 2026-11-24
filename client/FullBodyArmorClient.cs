@@ -34,9 +34,10 @@ using SAIN.SAINComponent.Classes.Info;
 
 namespace FullBodyArmorClient
 {
-    [BepInPlugin("com.silian.exoskeleton.client", "FullBodyArmor Client", "1.1.0")]
+    [BepInPlugin("com.silian.exoskeleton.client", "FullBodyArmor Client", "1.1.1")]
     [BepInDependency("me.sol.sain")]
     [BepInDependency("com.fika.core", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("com.mpstark.PlayerEncumbranceBar", BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         internal static ManualLogSource Log;
@@ -63,6 +64,7 @@ namespace FullBodyArmorClient
             Feature("recoil", ExoskeletonRecoil.Patch);
             ExoskeletonMovement.Patch(exo);
             ExoskeletonTraversal.Patch(new Harmony("com.silian.exoskeleton.traversal"));
+            try { EncumbranceBarCompat.Patch(exo); } catch (Exception ex) { Log.LogWarning("[Exoskeleton] PlayerEncumbranceBar compat failed: " + ex.Message); }
             foreach (var ctor in AccessTools.GetDeclaredConstructors(typeof(BotProfile)))
                 h.Patch(ctor, postfix: new HarmonyMethod(typeof(Plugin), nameof(ProfileCtorPost)));
             h.Patch(AccessTools.Method(typeof(PersonalityDictionary), nameof(PersonalityDictionary.GetPersonality)),
